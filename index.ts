@@ -1,0 +1,1 @@
+export { Ng2DashboardModule } from './components/index';
