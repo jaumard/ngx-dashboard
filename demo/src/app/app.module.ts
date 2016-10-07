@@ -4,14 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
-import { WidgetComponent } from './widget/widget.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { Dashboard } from './directives/dashboard.directive';
+import { Widget } from './directives/widget.directive';
+import { MyWidgetComponent } from './components/my-widget/my-widget.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    WidgetComponent,
-    DashboardComponent
+    Dashboard,
+    Widget,
+    MyWidgetComponent
   ],
   imports: [
     BrowserModule,

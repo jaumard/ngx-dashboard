@@ -1,13 +1,15 @@
-app-dashboard {
+.dashboard {
   width: 900px;
   position: relative;
   background-color: red;
 }
 
-app-dashboard app-widget {
+.dashboard .widget {
   width: 300px;
   height: 300px;
-  margin: 10px;
-  float: left;
   background-color: darkgrey;
+  -webkit-transition: all 500ms ease-out;
+  -moz-transition: all 500ms ease-out;
+  -o-transition: all 500ms ease-out;
+  transition: all 500ms ease-out;
 }
