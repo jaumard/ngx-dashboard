@@ -17,9 +17,11 @@
   user-select: none;           /* Non-prefixed version, currently
                                   not supported by any browser */
   background-color: darkgrey;
-  /*
+}
+
+.widget.animate {
   -webkit-transition: all 500ms ease-out;
   -moz-transition: all 500ms ease-out;
   -o-transition: all 500ms ease-out;
-  transition: all 500ms ease-out;*/
+  transition: all 500ms ease-out;
 }
