@@ -1,4 +1,15 @@
-import {EventEmitter, ContentChildren, Directive, Input, Output, OnInit, AfterViewInit, Renderer, ElementRef, QueryList} from '@angular/core';
+import {
+  EventEmitter,
+  ContentChildren,
+  Directive,
+  Input,
+  Output,
+  OnInit,
+  AfterViewInit,
+  Renderer,
+  ElementRef,
+  QueryList
+} from '@angular/core';
 import {Widget} from "./widget.directive";
 
 @Directive({
@@ -19,6 +30,7 @@ export class Dashboard implements OnInit, AfterViewInit {
 
   @Input() margin: number = 10;
   @Input() handle: string;
+  @Input() widgetsSize: number[] = [300, 300];
 
   //	Public variables
   public dragEnable: boolean = true;
@@ -28,11 +40,14 @@ export class Dashboard implements OnInit, AfterViewInit {
   private _destroyed: boolean = false;
   private _isDragging: boolean = false;
   private _dragReady: boolean = false;
+  private _currentElement: Widget;
+  private _offset: any;
 
   @ContentChildren(Widget) _items: QueryList<Widget>;
 
   constructor(private _ngEl: ElementRef,
-              private _renderer: Renderer) { }
+              private _renderer: Renderer) {
+  }
 
   ngOnInit(): void {
     this._renderer.setElementClass(this._ngEl.nativeElement, 'dashboard', true);
@@ -40,10 +55,10 @@ export class Dashboard implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this._width = this._ngEl.nativeElement.offsetWidth;
-    console.log(this._ngEl.nativeElement.offsetWidth);
     this._items.forEach(item => {
       item.setEventListener(this.handle, this._onMouseDown.bind(this));
     })
+
     this._calculPositions();
   }
 
@@ -68,20 +83,24 @@ export class Dashboard implements OnInit, AfterViewInit {
     let left = this.margin;
 
     let items = this._items.toArray();
-    items[0].setPosition(top, left);
 
-    for (let i = 1; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
       let item = items[i];
-      if((left + item.width*2 + this.margin) < this._width) {
-        left +=  item.width + this.margin;
-      }
-      else {
+
+      item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
+      item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
+
+      if ((left + item.width + this.margin) > this._width) {
         left = this.margin;
         top += item.height + this.margin;
       }
-      item.setPosition(top, left);
-    }
 
+      console.log(item.width, item.height, item.size);
+      item.setPosition(top, left);
+
+      left += item.width + this.margin;
+
+    }
   }
 
   private _onResize(e: any): void {
@@ -90,15 +109,20 @@ export class Dashboard implements OnInit, AfterViewInit {
     this._calculPositions();
   }
 
-  private _onMouseDown(e: any): boolean {
-    console.log('_onMouseDown');
-    this._isDragging = true;
+  private _onMouseDown(e: any, widget: Widget): boolean {
+    console.log('_onMouseDown', e);
+    this._isDragging = this.dragEnable;
+    this._currentElement = widget;
+    this._offset = {top: e.offsetY, left: e.offsetX}
     return true;
   }
 
   private _onMouseMove(e: any): boolean {
-    if(this._isDragging) {
+    if (this._isDragging) {
+      const pos = this._getMousePosition(e);
+      this._currentElement.setPosition(pos.top - this._offset.top, pos.left - this._offset.left);
       console.log('_onMouseMove');
+
     }
     return true;
   }

@@ -1,9 +1,10 @@
-import {Directive, OnInit, Renderer, ElementRef} from '@angular/core';
+import {Directive, OnInit, Renderer, Input, ElementRef} from '@angular/core';
 
 @Directive({
   selector: '[widget]'
 })
 export class Widget implements OnInit {
+  @Input() public size: number[] = [1, 1];
 
   constructor(private _ngEl: ElementRef,
               private _renderer: Renderer) {
@@ -21,6 +22,14 @@ export class Widget implements OnInit {
     return this._ngEl.nativeElement.offsetHeight;
   }
 
+  public set height(height) {
+    this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
+  }
+
+  public set width(width) {
+    this._renderer.setElementStyle(this._ngEl.nativeElement, 'width', width + 'px');
+  }
+
   public setPosition(top: number, left: number): void {
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'top', top + 'px');
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
@@ -31,8 +40,8 @@ export class Widget implements OnInit {
 
     }
     else {
-      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', cb);
-      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', cb);
+      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cb(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cb(e, this));
     }
   }
 }

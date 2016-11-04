@@ -6,14 +6,12 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { Dashboard } from './directives/dashboard.directive';
 import { Widget } from './directives/widget.directive';
-import { MyWidgetComponent } from './components/my-widget/my-widget.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     Dashboard,
-    Widget,
-    MyWidgetComponent
+    Widget
   ],
   imports: [
     BrowserModule,
