@@ -38476,7 +38476,8 @@ var DashboardComponent = (function () {
             item.setEventListener(_this.handle, _this._onMouseDown.bind(_this));
             _this._elements.push(item);
         });
-        this._offset = { top: this._ngEl.nativeElement.offsetY, left: this._ngEl.nativeElement.offsetX };
+        this._offset = { top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
+            left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft };
         this._calculPositions();
     };
     DashboardComponent.prototype.enableDrag = function () {
@@ -38509,6 +38510,8 @@ var DashboardComponent = (function () {
         console.log('_onResize');
         this._width = this._ngEl.nativeElement.offsetWidth;
         this._calculPositions();
+        e.preventDefault();
+        e.stopPropagation();
     };
     DashboardComponent.prototype._onMouseDown = function (e, widget) {
         var _this = this;
@@ -38516,22 +38519,27 @@ var DashboardComponent = (function () {
         this._isDragging = this.dragEnable;
         widget.addClass('active');
         this._currentElement = widget;
-        this._offset = { top: e.offsetY, left: e.offsetX };
+        this._offset = this._getOffsetFromTarget(e);
         this._elements.forEach(function (item) {
             if (item != _this._currentElement) {
                 item.addClass('animate');
             }
         });
+        e.preventDefault();
+        e.stopPropagation();
         return true;
     };
     DashboardComponent.prototype._onMouseMove = function (e) {
         if (this._isDragging) {
+            console.log('_onMouseMove', e);
             var pos = this._getMousePosition(e);
             var left = pos.left - this._offset.left;
             var top = pos.top - this._offset.top;
             this._elements.sort(this._compare);
             this._calculPositions();
             this._currentElement.setPosition(top, left);
+            e.preventDefault();
+            e.stopPropagation();
         }
         return true;
     };
@@ -38551,12 +38559,33 @@ var DashboardComponent = (function () {
                 item.removeClass('animate');
             });
         }, 500);
+        e.preventDefault();
+        e.stopPropagation();
         return true;
     };
-    DashboardComponent.prototype._getMousePosition = function (e) {
+    DashboardComponent.prototype._manageEvent = function (e) {
         if ((window.TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
             e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
         }
+        return e;
+    };
+    DashboardComponent.prototype._getOffsetFromTarget = function (e) {
+        var x;
+        var y;
+        if ((window.TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
+            e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
+            //const rect = e.target.getBoundingClientRect();
+            x = e.pageX - e.target.offsetLeft;
+            y = e.pageY - e.target.offsetTop;
+        }
+        else {
+            x = e.offsetX || e.offsetLeft;
+            y = e.offsetY || e.offsetTop;
+        }
+        return { top: y, left: x };
+    };
+    DashboardComponent.prototype._getMousePosition = function (e) {
+        e = this._manageEvent(e);
         var refPos = this._ngEl.nativeElement.getBoundingClientRect();
         var left = e.clientX - refPos.left;
         var top = e.clientY - refPos.top;
@@ -38566,9 +38595,7 @@ var DashboardComponent = (function () {
         };
     };
     DashboardComponent.prototype._getAbsoluteMousePosition = function (e) {
-        if ((window.TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
-            e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
-        }
+        e = this._manageEvent(e);
         return {
             left: e.clientX,
             top: e.clientY
@@ -38611,7 +38638,8 @@ var DashboardComponent = (function () {
                 '(document:mousemove)': '_onMouseMove($event)',
                 '(document:mouseup)': '_onMouseUp($event)',
                 '(document:touchmove)': '_onMouseMove($event)',
-                '(document:touchend)': '_onMouseUp($event)'
+                '(document:touchend)': '_onMouseUp($event)',
+                '(document:touchcancel)': '_onMouseUp($event)'
             },
             styles: [__webpack_require__(591)]
         }), 
@@ -38720,6 +38748,7 @@ var Widget = (function () {
         configurable: true
     });
     Widget.prototype.setPosition = function (top, left) {
+        console.log('setPosition', top, left);
         this._renderer.setElementStyle(this._ngEl.nativeElement, 'top', top + 'px');
         this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
     };

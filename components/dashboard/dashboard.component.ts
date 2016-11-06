@@ -20,7 +20,8 @@ import {Widget} from "../../directives/widget.directive";
     '(document:mousemove)': '_onMouseMove($event)',
     '(document:mouseup)': '_onMouseUp($event)',
     '(document:touchmove)': '_onMouseMove($event)',
-    '(document:touchend)': '_onMouseUp($event)'
+    '(document:touchend)': '_onMouseUp($event)',
+    '(document:touchcancel)': '_onMouseUp($event)'
   },
   styles: [require('./dashboard.component.css')]
 })
@@ -60,8 +61,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this._items.forEach(item => {
       item.setEventListener(this.handle, this._onMouseDown.bind(this));
       this._elements.push(item);
-    })
-    this._offset = {top: this._ngEl.nativeElement.offsetY, left: this._ngEl.nativeElement.offsetX}
+    });
+
+    this._offset = {top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
+      left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft};
     this._calculPositions();
   }
 
@@ -109,6 +112,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     console.log('_onResize');
     this._width = this._ngEl.nativeElement.offsetWidth;
     this._calculPositions();
+    e.preventDefault();
+    e.stopPropagation();
   }
 
   private _onMouseDown(e: any, widget: Widget): boolean {
@@ -116,24 +121,29 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this._isDragging = this.dragEnable;
     widget.addClass('active');
     this._currentElement = widget;
-    this._offset = {top: e.offsetY, left: e.offsetX}
+    this._offset = this._getOffsetFromTarget(e);
     this._elements.forEach(item => {
       if (item != this._currentElement) {
         item.addClass('animate');
       }
     });
+    e.preventDefault();
+    e.stopPropagation();
     return true;
   }
 
   private _onMouseMove(e: any): boolean {
     if (this._isDragging) {
+      console.log('_onMouseMove', e);
       const pos = this._getMousePosition(e);
       let left = pos.left - this._offset.left;
       let top = pos.top - this._offset.top;
+
       this._elements.sort(this._compare);
       this._calculPositions();
       this._currentElement.setPosition(top, left);
-
+      e.preventDefault();
+      e.stopPropagation();
     }
     return true;
   }
@@ -153,20 +163,42 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         item.removeClass('animate');
       });
     }, 500);
+    e.preventDefault();
+    e.stopPropagation();
 
     return true;
   }
 
-  private _getMousePosition(e: any): any {
+  private _manageEvent(e: any): any {
     if (((<any>window).TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
       e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
     }
+    return e;
+  }
 
+  private _getOffsetFromTarget(e: any) {
+    let x;
+    let y;
+    if (((<any>window).TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
+      e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
+      //const rect = e.target.getBoundingClientRect();
+      x = e.pageX - e.target.offsetLeft;
+      y = e.pageY - e.target.offsetTop;
+    }
+    else {
+      x = e.offsetX || e.offsetLeft;
+      y = e.offsetY || e.offsetTop;
+    }
+
+    return {top: y, left: x};
+  }
+
+  private _getMousePosition(e: any): any {
+    e = this._manageEvent(e);
     const refPos: any = this._ngEl.nativeElement.getBoundingClientRect();
 
     let left: number = e.clientX - refPos.left;
     let top: number = e.clientY - refPos.top;
-
     return {
       left: left,
       top: top
@@ -174,9 +206,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   private _getAbsoluteMousePosition(e: any): any {
-    if (((<any>window).TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
-      e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
-    }
+    e = this._manageEvent(e);
 
     return {
       left: e.clientX,

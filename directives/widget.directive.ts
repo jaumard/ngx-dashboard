@@ -35,6 +35,7 @@ export class Widget implements OnInit {
   }
 
   public setPosition(top: number, left: number): void {
+    console.log('setPosition', top, left);
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'top', top + 'px');
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
   }
