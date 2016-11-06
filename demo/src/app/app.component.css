@@ -1,27 +1,7 @@
 .dashboard {
   width: 100%;
-  min-height: 1000px;
-  position: relative;
-  background-color: red;
 }
 
 .dashboard .widget {
-  position: absolute;
-  top: 0;
-  left:0;
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Chrome/Safari/Opera */
-  -khtml-user-select: none;    /* Konqueror */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* Internet Explorer/Edge */
-  user-select: none;           /* Non-prefixed version, currently
-                                  not supported by any browser */
   background-color: darkgrey;
-}
-
-.widget.animate {
-  -webkit-transition: all 500ms ease-out;
-  -moz-transition: all 500ms ease-out;
-  -o-transition: all 500ms ease-out;
-  transition: all 500ms ease-out;
 }

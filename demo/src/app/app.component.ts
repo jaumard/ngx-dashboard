@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {Dashboard} from "./directives/dashboard.directive";
+import {DashboardComponent} from "../../../components/dashboard/dashboard.component";
 
 @Component({
   selector: 'app-root',
@@ -8,7 +8,7 @@ import {Dashboard} from "./directives/dashboard.directive";
 })
 export class AppComponent {
   title = 'app works!';
-  @ViewChild(Dashboard) dashboard;
+  @ViewChild(DashboardComponent) dashboard;
 
   constructor() {
 

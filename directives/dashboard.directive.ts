@@ -113,6 +113,7 @@ export class Dashboard implements OnInit, AfterViewInit {
   private _onMouseDown(e: any, widget: Widget): boolean {
     console.log('_onMouseDown', e);
     this._isDragging = this.dragEnable;
+    widget.addClass('active');
     this._currentElement = widget;
     this._offset = {top: e.offsetY, left: e.offsetX}
     this._elements.forEach(item => {
@@ -139,13 +140,17 @@ export class Dashboard implements OnInit, AfterViewInit {
   private _onMouseUp(e: any): boolean {
     console.log('_onMouseUp');
     this._isDragging = false;
+    this._currentElement.removeClass('active');
     this._currentElement.addClass('animate');
     this._currentElement = null;
     this._offset = null;
     this._calculPositions();
-    this._items.forEach(item => {
-      item.removeClass('animate');
-    });
+    setTimeout(() => {
+      this._items.forEach(item => {
+        item.removeClass('animate');
+      });
+    }, 500);
+
     return true;
   }
 
