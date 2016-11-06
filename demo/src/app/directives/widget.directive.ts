@@ -48,4 +48,12 @@ export class Widget implements OnInit {
       this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cb(e, this));
     }
   }
+
+  addClass(myClass: string) {
+    this._renderer.setElementClass(this._ngEl.nativeElement, myClass, true);
+  }
+
+  removeClass(myClass: string) {
+    this._renderer.setElementClass(this._ngEl.nativeElement, myClass, false);
+  }
 }

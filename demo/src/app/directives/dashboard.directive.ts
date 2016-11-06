@@ -41,6 +41,7 @@ export class Dashboard implements OnInit, AfterViewInit {
   private _isDragging: boolean = false;
   private _dragReady: boolean = false;
   private _currentElement: Widget;
+  private _elements: Widget[] = [];
   private _offset: any;
 
   @ContentChildren(Widget) _items: QueryList<Widget>;
@@ -57,6 +58,7 @@ export class Dashboard implements OnInit, AfterViewInit {
     this._width = this._ngEl.nativeElement.offsetWidth;
     this._items.forEach(item => {
       item.setEventListener(this.handle, this._onMouseDown.bind(this));
+      this._elements.push(item);
     })
     this._offset = {top: this._ngEl.nativeElement.offsetY, left: this._ngEl.nativeElement.offsetX}
     this._calculPositions();
@@ -82,7 +84,7 @@ export class Dashboard implements OnInit, AfterViewInit {
     let top = this.margin;
     let left = this.margin;
 
-    let items = this._items.toArray();
+    let items = this._elements;
 
     for (let i = 0; i < items.length; i++) {
       let item = items[i];
@@ -113,41 +115,22 @@ export class Dashboard implements OnInit, AfterViewInit {
     this._isDragging = this.dragEnable;
     this._currentElement = widget;
     this._offset = {top: e.offsetY, left: e.offsetX}
+    this._elements.forEach(item => {
+      if (item != this._currentElement) {
+        item.addClass('animate');
+      }
+    });
     return true;
   }
 
   private _onMouseMove(e: any): boolean {
     if (this._isDragging) {
       const pos = this._getMousePosition(e);
-      const refPos: any = this._ngEl.nativeElement.getBoundingClientRect();
-
-      const widgetOffset = this._currentElement.offset
-
       let left = pos.left - this._offset.left;
       let top = pos.top - this._offset.top;
-      /*
-       if (refPos.left > widgetOffset.left || pos.left < 0 || widgetOffset.left < 0) {
-       left = this.margin;
-       this._offset.left = widgetOffset.left < 0 ? 0 : widgetOffset.left;
-       console.log('force left to ' + refPos.left);
-       }
-       else {
-       left = pos.left - this._offset.left;
-       console.log('user left to ' + left);
-       }
-
-       if (refPos.top > widgetOffset.top || pos.top < 0 || widgetOffset.top < 0) {
-       top = this.margin;
-       this._offset.top = widgetOffset.top < 0 ? 0 : widgetOffset.top;
-       console.log('force top to ' + refPos.top);
-       }
-       else {
-       top = pos.top - this._offset.top;
-       console.log('user top to ' + top);
-       }*/
-
+      this._elements.sort(this._compare);
+      this._calculPositions();
       this._currentElement.setPosition(top, left);
-      //console.log('_onMouseMove', refPos, pos, widgetOffset, left, top);
 
     }
     return true;
@@ -156,8 +139,13 @@ export class Dashboard implements OnInit, AfterViewInit {
   private _onMouseUp(e: any): boolean {
     console.log('_onMouseUp');
     this._isDragging = false;
+    this._currentElement.addClass('animate');
     this._currentElement = null;
     this._offset = null;
+    this._calculPositions();
+    this._items.forEach(item => {
+      item.removeClass('animate');
+    });
     return true;
   }
 
@@ -187,5 +175,22 @@ export class Dashboard implements OnInit, AfterViewInit {
       top: e.clientY
     };
   }
+
+  private _compare = function (widget1, widget2) {
+    if (widget1.offset.top > widget2.offset.top + widget2.height) {
+      return +1;
+    }
+    if (widget2.offset.top > widget1.offset.top + widget1.height) {
+      return -1;
+    }
+    if ((widget1.offset.left + (widget1.width / 2)) > (widget2.offset.left + (widget2.width / 2))) {
+      return +1;
+    }
+    if ((widget2.offset.left + (widget2.width / 2)) > (widget1.offset.left + (widget1.width / 2))) {
+      return -1;
+    }
+    return 0;
+  };
+
 
 }
