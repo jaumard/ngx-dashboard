@@ -2,7 +2,7 @@
   {{title}}
 </h1>
 <button (click)="addWidget()">Add widget</button>
-<dashboard class="dashboard" [margin]="20">
+<dashboard (onDragStart)="console.log('ondragstart')" class="dashboard" [margin]="20">
   <div widget><div class="head">Widget 4</div></div>
   <div widget><div class="head">Widget 5</div></div>
   <div widget><div class="head">Widget 6</div></div>

@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 //	Event Emitters
   @Output() public onDragStart: EventEmitter<Widget> = new EventEmitter<Widget>();
   @Output() public onDrag: EventEmitter<Widget> = new EventEmitter<Widget>();
-  @Output() public onDragStop: EventEmitter<Widget> = new EventEmitter<Widget>();
+  @Output() public onDragEnd: EventEmitter<Widget> = new EventEmitter<Widget>();
 
   @Input() margin: number = 10;
   @Input() handle: string;
@@ -111,71 +111,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Simulate a mouse event based on a corresponding touch event
-   * @param {Object} event A touch event
-   * @param {String} simulatedType The corresponding mouse event
-
-  private simulateMouseEvent(event: any, simulatedType: any): any {
-    // Ignore multi-touch events
-    if (event.touches.length > 1) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const touch = event.changedTouches[0],
-      simulatedEvent = document.createEvent('MouseEvents');
-
-    // Initialize the simulated mouse event using the touch event's coordinates
-    simulatedEvent.initMouseEvent(
-      simulatedType,    // type
-      true,             // bubbles
-      true,             // cancelable
-      window,           // view
-      1,                // detail
-      touch.screenX,    // screenX
-      touch.screenY,    // screenY
-      touch.clientX,    // clientX
-      touch.clientY,    // clientY
-      false,            // ctrlKey
-      false,            // altKey
-      false,            // shiftKey
-      false,            // metaKey
-      0,                // button
-      null              // relatedTarget
-    );
-
-    // Dispatch the simulated event to the target element
-    event.target.dispatchEvent(simulatedEvent);
-  }
-
-  private _onTouchEvent(e: any): any {
-    if (e.type === 'touchstart') {
-      // Simulate the mouseover event
-      this.simulateMouseEvent(event, 'mouseover');
-
-      // Simulate the mousemove event
-      this.simulateMouseEvent(event, 'mousemove');
-
-      // Simulate the mousedown event
-      this.simulateMouseEvent(event, 'mousedown');
-    }
-    else if(e.type === 'touchmove') {
-      debugger;
-      // Simulate the mousemove event
-      this.simulateMouseEvent(event, 'mousemove');
-    }
-    else if(e.type === 'touchend' || e.type === 'touchcancel') {
-      // Simulate the mouseup event
-      this.simulateMouseEvent(event, 'mouseup');
-
-      // Simulate the mouseout event
-      this.simulateMouseEvent(event, 'mouseout');
-    }
-  }
-   */
-
   private _onResize(e: any): void {
     console.log('_onResize');
     this._width = this._ngEl.nativeElement.offsetWidth;
@@ -188,6 +123,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     console.log('_onMouseDown', e);
     this._isDragging = this.dragEnable;
     if (this._isDragging) {
+      this.onDragStart.next(widget);
       widget.addClass('active');
       this._currentElement = widget;
       this._offset = this._getOffsetFromTarget(e);
@@ -208,6 +144,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private _onMouseMove(e: any): boolean {
     if (this._isDragging) {
       console.log('_onMouseMove', e);
+      this.onDrag.next(this._currentElement);
       const pos = this._getMousePosition(e);
       let left = pos.left - this._offset.left;
       let top = pos.top - this._offset.top;
@@ -229,6 +166,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     this._isDragging = false;
     if (this._currentElement) {
+      this.onDragEnd.next(this._currentElement);
       this._currentElement.removeClass('active');
       this._currentElement.addClass('animate');
     }
@@ -249,7 +187,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   private _manageEvent(e: any): any {
-    if (((<any>window).TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
+    if (this._isTouchEvent(e)) {
       e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
     }
     return e;
@@ -262,7 +200,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private _getOffsetFromTarget(e: any) {
     let x;
     let y;
-    if (((<any>window).TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
+    if (this._isTouchEvent(e)) {
       e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
       x = e.pageX - e.target.offsetLeft;
       y = e.pageY - e.target.offsetTop;
