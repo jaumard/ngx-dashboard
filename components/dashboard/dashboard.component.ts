@@ -112,7 +112,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   private _onResize(e: any): void {
-    console.log('_onResize');
     this._width = this._ngEl.nativeElement.offsetWidth;
     this._calculPositions();
     e.preventDefault();
@@ -120,10 +119,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   private _onMouseDown(e: any, widget: Widget): boolean {
-    console.log('_onMouseDown', e);
     this._isDragging = this.dragEnable;
     if (this._isDragging) {
-      this.onDragStart.next(widget);
+      this.onDragStart.emit(widget);
       widget.addClass('active');
       this._currentElement = widget;
       this._offset = this._getOffsetFromTarget(e);
@@ -143,8 +141,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   private _onMouseMove(e: any): boolean {
     if (this._isDragging) {
-      console.log('_onMouseMove', e);
-      this.onDrag.next(this._currentElement);
+      this.onDrag.emit(this._currentElement);
       const pos = this._getMousePosition(e);
       let left = pos.left - this._offset.left;
       let top = pos.top - this._offset.top;
@@ -162,11 +159,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   private _onMouseUp(e: any): boolean {
-    console.log('_onMouseUp');
-
     this._isDragging = false;
     if (this._currentElement) {
-      this.onDragEnd.next(this._currentElement);
+      this.onDragEnd.emit(this._currentElement);
       this._currentElement.removeClass('active');
       this._currentElement.addClass('animate');
     }

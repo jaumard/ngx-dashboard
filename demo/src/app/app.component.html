@@ -2,13 +2,15 @@
   {{title}}
 </h1>
 <button (click)="addWidget()">Add widget</button>
-<dashboard (onDragStart)="console.log('ondragstart')" class="dashboard" [margin]="20">
+<dashboard (onDragStart)="log($event, 'ondragstart')" (onDragEnd)="log($event, 'ondragend')"
+           (onDrag)="log($event, 'ondragmove')" class="dashboard" [margin]="20">
   <div widget><div class="head">Widget 4</div></div>
   <div widget><div class="head">Widget 5</div></div>
   <div widget><div class="head">Widget 6</div></div>
   <div widget>
     <div class="head">Widget 7</div>
   </div>
+  <app-my-widget widget></app-my-widget>
   <div widget><div class="head">Widget 8</div></div>
   <div widget><div class="head">Widget 9</div></div>
   <div widget><div class="head">Widget 10</div></div>

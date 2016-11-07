@@ -1,5 +1,6 @@
 import {Component, ViewChild} from '@angular/core';
 import {DashboardComponent} from "../../../components/dashboard/dashboard.component";
+import {Widget} from "../../../directives/widget.directive";
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,10 @@ export class AppComponent {
 
   constructor() {
 
+  }
+
+  log(widget: Widget, type: string) {
+    console.log(widget, type);
   }
 
   addWidget() {

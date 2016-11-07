@@ -7,10 +7,8 @@ import {Widget} from "../../../../directives/widget.directive";
   styleUrls: ['./my-widget.component.css']
 })
 export class MyWidgetComponent extends Widget implements OnInit {
-
-  constructor(private _ngEl: ElementRef,
-              private _renderer: Renderer) {
-    super(this._ngEl, this._renderer);
+  constructor(ngEl: ElementRef, renderer: Renderer) {
+    super(ngEl, renderer);
   }
 
   ngOnInit() {
