@@ -35,18 +35,17 @@ export class Widget implements OnInit {
   }
 
   public setPosition(top: number, left: number): void {
-    console.log('setPosition', top, left);
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'top', top + 'px');
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
   }
 
-  public setEventListener(handle: string, cbMouse: Function, cbTouch: Function): void {
+  public setEventListener(handle: string, cbMouse: Function): void {
     if (handle) {
 
     }
     else {
       this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cbMouse(e, this));
-      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cbTouch(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cbMouse(e, this));
     }
   }
 

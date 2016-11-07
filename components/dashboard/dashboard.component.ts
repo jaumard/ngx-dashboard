@@ -19,9 +19,9 @@ import {Widget} from "../../directives/widget.directive";
     '(window:resize)': '_onResize($event)',
     '(document:mousemove)': '_onMouseMove($event)',
     '(document:mouseup)': '_onMouseUp($event)',
-    '(document:touchmove)': '_onTouchEvent($event)',
-    '(document:touchend)': '_onTouchEvent($event)',
-    '(document:touchcancel)': '_onTouchEvent($event)'
+    '(document:touchmove)': '_onMouseMove($event)',
+    '(document:touchend)': '_onMouseUp($event)',
+    '(document:touchcancel)': '_onMouseUp($event)'
   },
   styles: [require('./dashboard.component.css')]
 })
@@ -60,7 +60,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this._width = this._ngEl.nativeElement.offsetWidth;
     this._items.forEach(item => {
-      item.setEventListener(this.handle, this._onMouseDown.bind(this), this._onTouchEvent.bind(this));
+      item.setEventListener(this.handle, this._onMouseDown.bind(this));
       this._elements.push(item);
     });
 
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
    * Simulate a mouse event based on a corresponding touch event
    * @param {Object} event A touch event
    * @param {String} simulatedType The corresponding mouse event
-   */
+
   private simulateMouseEvent(event: any, simulatedType: any): any {
     // Ignore multi-touch events
     if (event.touches.length > 1) {
@@ -174,13 +174,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.simulateMouseEvent(event, 'mouseout');
     }
   }
+   */
 
   private _onResize(e: any): void {
     console.log('_onResize');
     this._width = this._ngEl.nativeElement.offsetWidth;
     this._calculPositions();
-    //e.preventDefault();
-    //e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
   }
 
   private _onMouseDown(e: any, widget: Widget): boolean {
@@ -195,13 +196,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           item.addClass('animate');
         }
       });
+
+      if (this._isTouchEvent(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     }
     return true;
   }
 
   private _onMouseMove(e: any): boolean {
     if (this._isDragging) {
-      debugger;
       console.log('_onMouseMove', e);
       const pos = this._getMousePosition(e);
       let left = pos.left - this._offset.left;
@@ -210,6 +215,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this._elements.sort(this._compare);
       this._calculPositions();
       this._currentElement.setPosition(top, left);
+
+      if (this._isTouchEvent(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     }
     return true;
   }
@@ -230,6 +240,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         item.removeClass('animate');
       });
     }, 500);
+    if (this._isTouchEvent(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
     return true;
   }
@@ -239,6 +253,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
     }
     return e;
+  }
+
+  private _isTouchEvent(e: any): any {
+    return ((<any>window).TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches);
   }
 
   private _getOffsetFromTarget(e: any) {
