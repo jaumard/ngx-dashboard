@@ -38473,11 +38473,13 @@ var DashboardComponent = (function () {
         var _this = this;
         this._width = this._ngEl.nativeElement.offsetWidth;
         this._items.forEach(function (item) {
-            item.setEventListener(_this.handle, _this._onMouseDown.bind(_this));
+            item.setEventListener(_this.handle, _this._onMouseDown.bind(_this), _this._onTouchEvent.bind(_this));
             _this._elements.push(item);
         });
-        this._offset = { top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
-            left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft };
+        this._offset = {
+            top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
+            left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft
+        };
         this._calculPositions();
     };
     DashboardComponent.prototype.enableDrag = function () {
@@ -38506,31 +38508,85 @@ var DashboardComponent = (function () {
             left += item.width + this.margin;
         }
     };
+    /**
+     * Simulate a mouse event based on a corresponding touch event
+     * @param {Object} event A touch event
+     * @param {String} simulatedType The corresponding mouse event
+     */
+    DashboardComponent.prototype.simulateMouseEvent = function (event, simulatedType) {
+        // Ignore multi-touch events
+        if (event.touches.length > 1) {
+            return;
+        }
+        event.preventDefault();
+        var touch = event.changedTouches[0], simulatedEvent = document.createEvent('MouseEvents');
+        // Initialize the simulated mouse event using the touch event's coordinates
+        simulatedEvent.initMouseEvent(simulatedType, // type
+        true, // bubbles
+        true, // cancelable
+        window, // view
+        1, // detail
+        touch.screenX, // screenX
+        touch.screenY, // screenY
+        touch.clientX, // clientX
+        touch.clientY, // clientY
+        false, // ctrlKey
+        false, // altKey
+        false, // shiftKey
+        false, // metaKey
+        0, // button
+        null // relatedTarget
+        );
+        // Dispatch the simulated event to the target element
+        event.target.dispatchEvent(simulatedEvent);
+    };
+    DashboardComponent.prototype._onTouchEvent = function (e) {
+        if (e.type === 'touchstart') {
+            // Simulate the mouseover event
+            this.simulateMouseEvent(event, 'mouseover');
+            // Simulate the mousemove event
+            this.simulateMouseEvent(event, 'mousemove');
+            // Simulate the mousedown event
+            this.simulateMouseEvent(event, 'mousedown');
+        }
+        else if (e.type === 'touchmove') {
+            debugger;
+            // Simulate the mousemove event
+            this.simulateMouseEvent(event, 'mousemove');
+        }
+        else if (e.type === 'touchend' || e.type === 'touchcancel') {
+            // Simulate the mouseup event
+            this.simulateMouseEvent(event, 'mouseup');
+            // Simulate the mouseout event
+            this.simulateMouseEvent(event, 'mouseout');
+        }
+    };
     DashboardComponent.prototype._onResize = function (e) {
         console.log('_onResize');
         this._width = this._ngEl.nativeElement.offsetWidth;
         this._calculPositions();
-        e.preventDefault();
-        e.stopPropagation();
+        //e.preventDefault();
+        //e.stopPropagation();
     };
     DashboardComponent.prototype._onMouseDown = function (e, widget) {
         var _this = this;
         console.log('_onMouseDown', e);
         this._isDragging = this.dragEnable;
-        widget.addClass('active');
-        this._currentElement = widget;
-        this._offset = this._getOffsetFromTarget(e);
-        this._elements.forEach(function (item) {
-            if (item != _this._currentElement) {
-                item.addClass('animate');
-            }
-        });
-        e.preventDefault();
-        e.stopPropagation();
+        if (this._isDragging) {
+            widget.addClass('active');
+            this._currentElement = widget;
+            this._offset = this._getOffsetFromTarget(e);
+            this._elements.forEach(function (item) {
+                if (item != _this._currentElement) {
+                    item.addClass('animate');
+                }
+            });
+        }
         return true;
     };
     DashboardComponent.prototype._onMouseMove = function (e) {
         if (this._isDragging) {
+            debugger;
             console.log('_onMouseMove', e);
             var pos = this._getMousePosition(e);
             var left = pos.left - this._offset.left;
@@ -38538,8 +38594,6 @@ var DashboardComponent = (function () {
             this._elements.sort(this._compare);
             this._calculPositions();
             this._currentElement.setPosition(top, left);
-            e.preventDefault();
-            e.stopPropagation();
         }
         return true;
     };
@@ -38559,8 +38613,6 @@ var DashboardComponent = (function () {
                 item.removeClass('animate');
             });
         }, 500);
-        e.preventDefault();
-        e.stopPropagation();
         return true;
     };
     DashboardComponent.prototype._manageEvent = function (e) {
@@ -38574,7 +38626,6 @@ var DashboardComponent = (function () {
         var y;
         if ((window.TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches)) {
             e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
-            //const rect = e.target.getBoundingClientRect();
             x = e.pageX - e.target.offsetLeft;
             y = e.pageY - e.target.offsetTop;
         }
@@ -38637,9 +38688,9 @@ var DashboardComponent = (function () {
                 '(window:resize)': '_onResize($event)',
                 '(document:mousemove)': '_onMouseMove($event)',
                 '(document:mouseup)': '_onMouseUp($event)',
-                '(document:touchmove)': '_onMouseMove($event)',
-                '(document:touchend)': '_onMouseUp($event)',
-                '(document:touchcancel)': '_onMouseUp($event)'
+                '(document:touchmove)': '_onTouchEvent($event)',
+                '(document:touchend)': '_onTouchEvent($event)',
+                '(document:touchcancel)': '_onTouchEvent($event)'
             },
             styles: [__webpack_require__(591)]
         }), 
@@ -38752,13 +38803,13 @@ var Widget = (function () {
         this._renderer.setElementStyle(this._ngEl.nativeElement, 'top', top + 'px');
         this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
     };
-    Widget.prototype.setEventListener = function (handle, cb) {
+    Widget.prototype.setEventListener = function (handle, cbMouse, cbTouch) {
         var _this = this;
         if (handle) {
         }
         else {
-            this._renderer.listen(this._ngEl.nativeElement, 'mousedown', function (e) { return cb(e, _this); });
-            this._renderer.listen(this._ngEl.nativeElement, 'touchstart', function (e) { return cb(e, _this); });
+            this._renderer.listen(this._ngEl.nativeElement, 'mousedown', function (e) { return cbMouse(e, _this); });
+            this._renderer.listen(this._ngEl.nativeElement, 'touchstart', function (e) { return cbTouch(e, _this); });
         }
     };
     Widget.prototype.addClass = function (myClass) {
@@ -54536,7 +54587,7 @@ module.exports = ".dashboard {\n  width: 100%;\n}\n\n.dashboard .widget {\n  bac
 /* 593 */
 /***/ function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<dashboard class=\"dashboard\" [margin]=\"20\">\n  <div widget><div class=\"head\">Widget 4</div></div>\n  <div widget><div class=\"head\">Widget 5</div></div>\n  <div widget><div class=\"head\">Widget 6</div></div>\n  <div widget>\n    <div class=\"head\">Widget 7</div>\n  </div>\n  <div widget><div class=\"head\">Widget 8</div></div>\n  <div widget><div class=\"head\">Widget 9</div></div>\n  <div widget><div class=\"head\">Widget 10</div></div>\n  <!--div widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <div widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <div widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<dashboard class=\"dashboard\" [margin]=\"20\">\n  <div widget><div class=\"head\">Widget 4</div></div>\n  <div widget><div class=\"head\">Widget 5</div></div>\n  <div widget><div class=\"head\">Widget 6</div></div>\n  <div widget>\n    <div class=\"head\">Widget 7</div>\n  </div>\n  <div widget><div class=\"head\">Widget 8</div></div>\n  <div widget><div class=\"head\">Widget 9</div></div>\n  <div widget><div class=\"head\">Widget 10</div></div>\n  <div widget><div class=\"head\">Widget 11</div></div>\n  <div widget><div class=\"head\">Widget 12</div></div>\n  <div widget><div class=\"head\">Widget 13</div></div>\n  <div widget><div class=\"head\">Widget 14</div></div>\n  <div widget><div class=\"head\">Widget 15</div></div>\n  <div widget><div class=\"head\">Widget 16</div></div>\n  <div widget><div class=\"head\">Widget 17</div></div>\n  <div widget><div class=\"head\">Widget 18</div></div>\n  <div widget><div class=\"head\">Widget 19</div></div>\n  <!--div widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <div widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <div widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
 
 /***/ },
 /* 594 */

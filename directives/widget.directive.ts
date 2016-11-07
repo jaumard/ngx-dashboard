@@ -40,13 +40,13 @@ export class Widget implements OnInit {
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
   }
 
-  public setEventListener(handle: string, cb: Function): void {
+  public setEventListener(handle: string, cbMouse: Function, cbTouch: Function): void {
     if (handle) {
 
     }
     else {
-      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cb(e, this));
-      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cb(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cbMouse(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cbTouch(e, this));
     }
   }
 
