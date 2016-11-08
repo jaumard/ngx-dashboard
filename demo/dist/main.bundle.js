@@ -25258,6 +25258,13 @@ var WidgetComponent = (function () {
     WidgetComponent.prototype.ngOnInit = function () {
         this._renderer.setElementClass(this._ngEl.nativeElement, 'widget', true);
     };
+    Object.defineProperty(WidgetComponent.prototype, "el", {
+        get: function () {
+            return this._ngEl.nativeElement;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(WidgetComponent.prototype, "offset", {
         get: function () {
             return this._ngEl.nativeElement.getBoundingClientRect();
@@ -38589,18 +38596,22 @@ var DashboardComponent = (function () {
         this._calculPositions();
     };
     DashboardComponent.prototype.removeItem = function (ngItem) {
+        this._removeElement(ngItem);
     };
     DashboardComponent.prototype.removeItemByIndex = function (index) {
         var element = this._elements.find(function (item, i) { return i === index; });
-        element.removeFromParent();
-        this._elements = this._elements.filter(function (item, i) { return i !== index; });
-        this._calculPositions();
+        this._removeElement(element);
     };
     DashboardComponent.prototype.removeItemById = function (id) {
         var element = this._elements.find(function (item) { return item.widgetId === id; });
-        element.removeFromParent();
-        this._elements = this._elements.filter(function (item, i) { return item.widgetId !== id; });
+        this._removeElement(element);
+    };
+    DashboardComponent.prototype._removeElement = function (widget) {
+        this._enableAnimation();
+        widget.removeFromParent();
+        this._elements = this._elements.filter(function (item, i) { return item !== widget; });
         this._calculPositions();
+        this._disableAnimation();
     };
     DashboardComponent.prototype._calculPositions = function () {
         var top = this.margin;
@@ -38625,19 +38636,14 @@ var DashboardComponent = (function () {
         e.stopPropagation();
     };
     DashboardComponent.prototype._onMouseDown = function (e, widget) {
-        var _this = this;
-        this._isDragging = this.dragEnable;
+        this._isDragging = this.dragEnable && e.target === widget.el;
         console.log('_onMouseDown');
         if (this._isDragging) {
             this.onDragStart.emit(widget);
             widget.addClass('active');
             this._currentElement = widget;
             this._offset = this._getOffsetFromTarget(e);
-            this._elements.forEach(function (item) {
-                if (item != _this._currentElement) {
-                    item.addClass('animate');
-                }
-            });
+            this._enableAnimation();
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -38662,7 +38668,6 @@ var DashboardComponent = (function () {
         return true;
     };
     DashboardComponent.prototype._onMouseUp = function (e) {
-        var _this = this;
         if (this._isDragging) {
             this._isDragging = false;
             if (this._currentElement) {
@@ -38673,11 +38678,7 @@ var DashboardComponent = (function () {
             this._currentElement = null;
             this._offset = null;
             this._calculPositions();
-            setTimeout(function () {
-                _this._elements.forEach(function (item) {
-                    item.removeClass('animate');
-                });
-            }, 500);
+            this._disableAnimation();
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -38724,6 +38725,22 @@ var DashboardComponent = (function () {
             left: e.clientX,
             top: e.clientY
         };
+    };
+    DashboardComponent.prototype._enableAnimation = function () {
+        var _this = this;
+        this._elements.forEach(function (item) {
+            if (item != _this._currentElement) {
+                item.addClass('animate');
+            }
+        });
+    };
+    DashboardComponent.prototype._disableAnimation = function () {
+        var _this = this;
+        setTimeout(function () {
+            _this._elements.forEach(function (item) {
+                item.removeClass('animate');
+            });
+        }, 500);
     };
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(), 
@@ -54649,7 +54666,7 @@ module.exports = ""
 /* 595 */
 /***/ function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}}</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}}</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
 
 /***/ },
 /* 596 */

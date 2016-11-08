@@ -2,7 +2,7 @@
   {{title}}
 </h1>
 <button (click)="addWidget()">Add widget</button>
-<br><br><br>
+<br><br>
 <dashboard (onDragStart)="log($event, 'ondragstart')" (onDragEnd)="log($event, 'ondragend')"
            (onDrag)="log($event, 'ondragmove')" class="dashboard" [margin]="20">
 
