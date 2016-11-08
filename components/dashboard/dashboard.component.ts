@@ -136,6 +136,7 @@ export class DashboardComponent implements AfterViewInit {
 
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
     this._isDragging = this.dragEnable;
+    console.log('_onMouseDown');
     if (this._isDragging) {
       this.onDragStart.emit(widget);
       widget.addClass('active');

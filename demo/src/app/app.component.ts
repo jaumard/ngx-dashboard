@@ -21,6 +21,7 @@ export class AppComponent {
   }
 
   addWidget() {
+    console.log('test');
     this.dashboard.addItem(MyWidgetComponent);
   }
 
