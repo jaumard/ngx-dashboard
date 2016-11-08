@@ -86,21 +86,25 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   public removeItem(ngItem: WidgetComponent): void {
-
+    this._removeElement(ngItem);
   }
 
   public removeItemByIndex(index: Number): void {
     const element = this._elements.find((item, i) => i === index);
-    element.removeFromParent();
-    this._elements = this._elements.filter((item, i) => i !== index);
-    this._calculPositions();
+    this._removeElement(element);
   }
 
   public removeItemById(id: string): void {
     const element = this._elements.find(item => item.widgetId === id);
-    element.removeFromParent();
-    this._elements = this._elements.filter((item, i) => item.widgetId !== id);
+    this._removeElement(element);
+  }
+
+  private _removeElement(widget: WidgetComponent) {
+    this._enableAnimation();
+    widget.removeFromParent();
+    this._elements = this._elements.filter((item, i) => item !== widget);
     this._calculPositions();
+    this._disableAnimation();
   }
 
   private _calculPositions(): void {
@@ -135,18 +139,14 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
-    this._isDragging = this.dragEnable;
+    this._isDragging = this.dragEnable && e.target === widget.el;
     console.log('_onMouseDown');
     if (this._isDragging) {
       this.onDragStart.emit(widget);
       widget.addClass('active');
       this._currentElement = widget;
       this._offset = this._getOffsetFromTarget(e);
-      this._elements.forEach(item => {
-        if (item != this._currentElement) {
-          item.addClass('animate');
-        }
-      });
+      this._enableAnimation();
 
       if (this._isTouchEvent(e)) {
         e.preventDefault();
@@ -186,11 +186,7 @@ export class DashboardComponent implements AfterViewInit {
       this._currentElement = null;
       this._offset = null;
       this._calculPositions();
-      setTimeout(() => {
-        this._elements.forEach(item => {
-          item.removeClass('animate');
-        });
-      }, 500);
+      this._disableAnimation();
       if (this._isTouchEvent(e)) {
         e.preventDefault();
         e.stopPropagation();
@@ -262,4 +258,20 @@ export class DashboardComponent implements AfterViewInit {
     }
     return 0;
   };
+
+  private _enableAnimation() {
+    this._elements.forEach(item => {
+      if (item != this._currentElement) {
+        item.addClass('animate');
+      }
+    });
+  }
+
+  private _disableAnimation() {
+    setTimeout(() => {
+      this._elements.forEach(item => {
+        item.removeClass('animate');
+      });
+    }, 500);
+  }
 }

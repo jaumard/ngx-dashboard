@@ -16,6 +16,10 @@ export class WidgetComponent implements OnInit {
     this._renderer.setElementClass(this._ngEl.nativeElement, 'widget', true);
   }
 
+  public get el() {
+    return this._ngEl.nativeElement;
+  }
+
   public get offset() {
     return this._ngEl.nativeElement.getBoundingClientRect();
   }
