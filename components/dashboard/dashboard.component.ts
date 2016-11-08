@@ -176,25 +176,26 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   private _onMouseUp(e: any): boolean {
-    this._isDragging = false;
-    if (this._currentElement) {
-      this.onDragEnd.emit(this._currentElement);
-      this._currentElement.removeClass('active');
-      this._currentElement.addClass('animate');
+    if (this._isDragging) {
+      this._isDragging = false;
+      if (this._currentElement) {
+        this.onDragEnd.emit(this._currentElement);
+        this._currentElement.removeClass('active');
+        this._currentElement.addClass('animate');
+      }
+      this._currentElement = null;
+      this._offset = null;
+      this._calculPositions();
+      setTimeout(() => {
+        this._elements.forEach(item => {
+          item.removeClass('animate');
+        });
+      }, 500);
+      if (this._isTouchEvent(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     }
-    this._currentElement = null;
-    this._offset = null;
-    this._calculPositions();
-    setTimeout(() => {
-      this._elements.forEach(item => {
-        item.removeClass('animate');
-      });
-    }, 500);
-    if (this._isTouchEvent(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
     return true;
   }
 

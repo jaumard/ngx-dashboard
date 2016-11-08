@@ -38663,23 +38663,25 @@ var DashboardComponent = (function () {
     };
     DashboardComponent.prototype._onMouseUp = function (e) {
         var _this = this;
-        this._isDragging = false;
-        if (this._currentElement) {
-            this.onDragEnd.emit(this._currentElement);
-            this._currentElement.removeClass('active');
-            this._currentElement.addClass('animate');
-        }
-        this._currentElement = null;
-        this._offset = null;
-        this._calculPositions();
-        setTimeout(function () {
-            _this._elements.forEach(function (item) {
-                item.removeClass('animate');
-            });
-        }, 500);
-        if (this._isTouchEvent(e)) {
-            e.preventDefault();
-            e.stopPropagation();
+        if (this._isDragging) {
+            this._isDragging = false;
+            if (this._currentElement) {
+                this.onDragEnd.emit(this._currentElement);
+                this._currentElement.removeClass('active');
+                this._currentElement.addClass('animate');
+            }
+            this._currentElement = null;
+            this._offset = null;
+            this._calculPositions();
+            setTimeout(function () {
+                _this._elements.forEach(function (item) {
+                    item.removeClass('animate');
+                });
+            }, 500);
+            if (this._isTouchEvent(e)) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
         return true;
     };
@@ -54647,7 +54649,7 @@ module.exports = ""
 /* 595 */
 /***/ function(module, exports) {
 
-module.exports = "<h1 (click)=\"addWidget()\">\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\"><div class=\"head\">Widget {{i}}</div><div class=\"close\" (click)=\"close($event, i)\">X</div></widget>\n  <app-my-widget widgetId=\"myId\"><div class=\"close\" (click)=\"close($event, 'myId')\">X</div></app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}}</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
 
 /***/ },
 /* 596 */
