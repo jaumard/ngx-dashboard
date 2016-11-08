@@ -1,10 +1,12 @@
-import {Directive, OnInit, Renderer, Input, ElementRef} from '@angular/core';
+import {Component, OnInit, Renderer, Input, ElementRef} from '@angular/core';
 
-@Directive({
-  selector: '[widget]'
+@Component({
+  selector: 'widget',
+  template: '<ng-content></ng-content>'
 })
-export class Widget implements OnInit {
+export class WidgetComponent implements OnInit {
   @Input() public size: number[] = [1, 1];
+  @Input() public widgetId: string;
 
   constructor(private _ngEl: ElementRef,
               private _renderer: Renderer) {
@@ -55,5 +57,10 @@ export class Widget implements OnInit {
 
   removeClass(myClass: string) {
     this._renderer.setElementClass(this._ngEl.nativeElement, myClass, false);
+  }
+
+  removeFromParent() {
+    const el: HTMLElement = this._ngEl.nativeElement;
+    el.parentNode.removeChild(el);
   }
 }

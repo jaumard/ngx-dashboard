@@ -1,6 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {DashboardComponent} from "../../../components/dashboard/dashboard.component";
-import {Widget} from "../../../directives/widget.directive";
+import {WidgetComponent} from "../../../components/widget/widget.component";
+import {MyWidgetComponent} from "./my-widget/my-widget.component";
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,17 @@ export class AppComponent {
 
   }
 
-  log(widget: Widget, type: string) {
+  log(widget: WidgetComponent, type: string) {
     console.log(widget, type);
   }
 
   addWidget() {
-    console.log(this.dashboard);
-    //TODO add dynamically a widget
-    //this.dashboard.addItem(...);
+    this.dashboard.addItem(MyWidgetComponent);
+  }
+
+  close(e: any, id: string) {
+    this.dashboard.removeItemById(id);
+    e.preventDefault();
+    e.stopPropagation();
   }
 }

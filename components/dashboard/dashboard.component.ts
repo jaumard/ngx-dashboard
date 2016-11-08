@@ -4,17 +4,18 @@ import {
   Component,
   Input,
   Output,
-  OnInit,
   AfterViewInit,
   Renderer,
   ElementRef,
-  QueryList
-} from '@angular/core';
-import {Widget} from "../../directives/widget.directive";
+  QueryList,
+  ViewContainerRef,
+  ComponentFactoryResolver, ViewChild
+} from "@angular/core";
+import {WidgetComponent} from "../widget/widget.component";
 
 @Component({
   selector: 'dashboard',
-  template: '<ng-content></ng-content>',
+  template: '<div #target><ng-content></ng-content></div>',
   host: {
     '(window:resize)': '_onResize($event)',
     '(document:mousemove)': '_onMouseMove($event)',
@@ -25,11 +26,11 @@ import {Widget} from "../../directives/widget.directive";
   },
   styles: [require('./dashboard.component.css')]
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements AfterViewInit {
 //	Event Emitters
-  @Output() public onDragStart: EventEmitter<Widget> = new EventEmitter<Widget>();
-  @Output() public onDrag: EventEmitter<Widget> = new EventEmitter<Widget>();
-  @Output() public onDragEnd: EventEmitter<Widget> = new EventEmitter<Widget>();
+  @Output() public onDragStart: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
+  @Output() public onDrag: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
+  @Output() public onDragEnd: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
 
   @Input() margin: number = 10;
   @Input() handle: string;
@@ -37,24 +38,21 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   //	Public variables
   public dragEnable: boolean = true;
+  @ViewChild('target', {read: ViewContainerRef}) _viewCntRef;
 
   //	Private variables
   private _width: number = 0;
-  private _destroyed: boolean = false;
   private _isDragging: boolean = false;
-  private _dragReady: boolean = false;
-  private _currentElement: Widget;
-  private _elements: Widget[] = [];
+  private _currentElement: WidgetComponent;
+  private _elements: WidgetComponent[] = [];
   private _offset: any;
 
-  @ContentChildren(Widget) _items: QueryList<Widget>;
+  @ContentChildren(WidgetComponent) _items: QueryList<WidgetComponent>;
 
-  constructor(private _ngEl: ElementRef,
+  constructor(private _componentFactoryResolver: ComponentFactoryResolver,
+              private _ngEl: ElementRef,
               private _renderer: Renderer) {
 
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
@@ -79,12 +77,30 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.dragEnable = false;
   }
 
-  public addItem(ngItem: Widget): void {
+  public addItem(ngItem: { new(): WidgetComponent}): void {
+    let factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
+    const ref = this._viewCntRef.createComponent(factory);
+    ref.instance.setEventListener(this.handle, this._onMouseDown.bind(this));
+    this._elements.push(ref.instance);
+    this._calculPositions();
+  }
+
+  public removeItem(ngItem: WidgetComponent): void {
 
   }
 
-  public removeItem(ngItem: Widget): void {
+  public removeItemByIndex(index: Number): void {
+    const element = this._elements.find((item, i) => i === index);
+    element.removeFromParent();
+    this._elements = this._elements.filter((item, i) => i !== index);
+    this._calculPositions();
+  }
 
+  public removeItemById(id: string): void {
+    const element = this._elements.find(item => item.widgetId === id);
+    element.removeFromParent();
+    this._elements = this._elements.filter((item, i) => item.widgetId !== id);
+    this._calculPositions();
   }
 
   private _calculPositions(): void {
@@ -118,7 +134,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     e.stopPropagation();
   }
 
-  private _onMouseDown(e: any, widget: Widget): boolean {
+  private _onMouseDown(e: any, widget: WidgetComponent): boolean {
     this._isDragging = this.dragEnable;
     if (this._isDragging) {
       this.onDragStart.emit(widget);
@@ -169,7 +185,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this._offset = null;
     this._calculPositions();
     setTimeout(() => {
-      this._items.forEach(item => {
+      this._elements.forEach(item => {
         item.removeClass('animate');
       });
     }, 500);

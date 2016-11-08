@@ -14,6 +14,9 @@ import {MyWidgetComponent} from './my-widget/my-widget.component';
     AppComponent,
     MyWidgetComponent
   ],
+  entryComponents: [
+    MyWidgetComponent
+  ],
   imports: [
     BrowserModule,
     FormsModule,
