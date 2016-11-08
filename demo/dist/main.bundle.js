@@ -38627,6 +38627,7 @@ var DashboardComponent = (function () {
     DashboardComponent.prototype._onMouseDown = function (e, widget) {
         var _this = this;
         this._isDragging = this.dragEnable;
+        console.log('_onMouseDown');
         if (this._isDragging) {
             this.onDragStart.emit(widget);
             widget.addClass('active');
@@ -38804,6 +38805,7 @@ var AppComponent = (function () {
         console.log(widget, type);
     };
     AppComponent.prototype.addWidget = function () {
+        console.log('test');
         this.dashboard.addItem(__WEBPACK_IMPORTED_MODULE_2__my_widget_my_widget_component__["a" /* MyWidgetComponent */]);
     };
     AppComponent.prototype.close = function (e, id) {
@@ -54645,7 +54647,7 @@ module.exports = ""
 /* 595 */
 /***/ function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\"><div class=\"head\">Widget {{i}}</div><div class=\"close\" (click)=\"close($event, i)\">X</div></widget>\n  <app-my-widget widgetId=\"myId\"><div class=\"close\" (click)=\"close($event, 'myId')\">X</div></app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
+module.exports = "<h1 (click)=\"addWidget()\">\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\"><div class=\"head\">Widget {{i}}</div><div class=\"close\" (click)=\"close($event, i)\">X</div></widget>\n  <app-my-widget widgetId=\"myId\"><div class=\"close\" (click)=\"close($event, 'myId')\">X</div></app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
 
 /***/ },
 /* 596 */
