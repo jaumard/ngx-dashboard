@@ -13,7 +13,7 @@ yarn install ng2-dashboard
 
 ## Usage 
 
-See demo source code here : https://github.com/jaumard/ng2-dashboard/tree/master/demo
+See demo source code here: https://github.com/jaumard/ng2-dashboard/tree/master/demo
 
 ### Create my own widget
 To do this you need to extend the WidgetComponent like this: 
@@ -38,9 +38,9 @@ export class MyWidgetComponent extends WidgetComponent {
 
 ```
 
-The "providers" part is important, if you miss it your widget will not be see as a widget.
+The `providers` part is mandatory, if you miss it your widget will not be see as a widget.
 
-The "@Input()" is mandatory if you want to use `removeById` because angular 2 doesn't inherit annotations yet.
+The `@Input()` is also mandatory if you want to use `removeById` because angular 2 doesn't inherit annotations yet.
 
 To dynamically add your widget you also need to declare it under "entryComponents" on your app module like this: 
 
@@ -74,6 +74,9 @@ import {MyWidgetComponent} from './my-widget/my-widget.component';
 export class AppModule { }
 
 ```
+
+## License
+[MIT](https://github.com/jaumard/trailpack-passport/blob/master/LICENSE)
 
 ## Support on Beerpay
 Hey dude! Help me out for a couple of :beers:!
