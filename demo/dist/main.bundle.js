@@ -140,7 +140,7 @@ $export.P = 8;   // proto
 $export.B = 16;  // bind
 $export.W = 32;  // wrap
 $export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
+$export.R = 128; // real proto method for `library`
 module.exports = $export;
 
 /***/ },
@@ -22069,7 +22069,7 @@ var ResolvedReflectiveFactory = (function () {
         /**
          * Factory function which can return an instance of an object represented by a key.
          */
-        factory, 
+        factory,
         /**
          * Arguments (dependencies) to the `factory` function.
          */
@@ -25316,18 +25316,18 @@ var WidgetComponent = (function () {
         el.parentNode.removeChild(el);
     };
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(),
         __metadata('design:type', Array)
     ], WidgetComponent.prototype, "size", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(),
         __metadata('design:type', String)
     ], WidgetComponent.prototype, "widgetId", void 0);
     WidgetComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Component */])({
             selector: 'widget',
             template: '<ng-content></ng-content>'
-        }), 
+        }),
         __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _b) || Object])
     ], WidgetComponent);
     return WidgetComponent;
@@ -25406,7 +25406,7 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
         while(index--)$instance[ADDER](index, index);
         return !$instance.has(-0);
       });
-    if(!ACCEPT_ITERABLES){ 
+    if(!ACCEPT_ITERABLES){
       C = wrapper(function(target, iterable){
         anInstance(target, C, NAME);
         var that = inheritIfRequired(new Base, target, C);
@@ -38569,6 +38569,11 @@ var DashboardComponent = (function () {
             return 0;
         };
     }
+
+  DashboardComponent.prototype.ngOnChanges = function (changes) {
+    // changes.prop contains the old and the new value...
+    this._calculPositions();
+  };
     DashboardComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         this._width = this._ngEl.nativeElement.offsetWidth;
@@ -38743,35 +38748,35 @@ var DashboardComponent = (function () {
         }, 500);
     };
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(),
         __metadata('design:type', (typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]) === 'function' && _a) || Object)
     ], DashboardComponent.prototype, "onDragStart", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(),
         __metadata('design:type', (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]) === 'function' && _b) || Object)
     ], DashboardComponent.prototype, "onDrag", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(),
         __metadata('design:type', (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]) === 'function' && _c) || Object)
     ], DashboardComponent.prototype, "onDragEnd", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(),
         __metadata('design:type', Number)
     ], DashboardComponent.prototype, "margin", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(),
         __metadata('design:type', String)
     ], DashboardComponent.prototype, "handle", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(),
         __metadata('design:type', Array)
     ], DashboardComponent.prototype, "widgetsSize", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_20" /* ViewChild */])('target', { read: __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */] }), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_20" /* ViewChild */])('target', { read: __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */] }),
         __metadata('design:type', Object)
     ], DashboardComponent.prototype, "_viewCntRef", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_21" /* ContentChildren */])(__WEBPACK_IMPORTED_MODULE_1__widget_widget_component__["a" /* WidgetComponent */]), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_21" /* ContentChildren */])(__WEBPACK_IMPORTED_MODULE_1__widget_widget_component__["a" /* WidgetComponent */]),
         __metadata('design:type', (typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */]) === 'function' && _d) || Object)
     ], DashboardComponent.prototype, "_items", void 0);
     DashboardComponent = __decorate([
@@ -38787,7 +38792,7 @@ var DashboardComponent = (function () {
                 '(document:touchcancel)': '_onMouseUp($event)'
             },
             styles: [__webpack_require__(592)]
-        }), 
+        }),
         __metadata('design:paramtypes', [(typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */]) === 'function' && _e) || Object, (typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _f) || Object, (typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _g) || Object])
     ], DashboardComponent);
     return DashboardComponent;
@@ -38819,7 +38824,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var AppComponent = (function () {
     function AppComponent() {
         this.title = 'app works!';
+      this.widgetsSize = [300, 300];
     }
+
+  AppComponent.prototype._onResize = function (event) {
+    if (window.innerWidth < 750) {
+      this.widgetsSize = [150, 150];
+    }
+    else {
+      this.widgetsSize = [300, 150];
+    }
+  };
     AppComponent.prototype.log = function (widget, type) {
         console.log(widget, type);
     };
@@ -38833,15 +38848,18 @@ var AppComponent = (function () {
         e.stopPropagation();
     };
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_20" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__components_dashboard_dashboard_component__["a" /* DashboardComponent */]), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_20" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__components_dashboard_dashboard_component__["a" /* DashboardComponent */]),
         __metadata('design:type', Object)
     ], AppComponent.prototype, "dashboard", void 0);
     AppComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Component */])({
             selector: 'app-root',
             template: __webpack_require__(595),
-            styles: [__webpack_require__(593)]
-        }), 
+          styles: [__webpack_require__(593)],
+          host: {
+            '(window:resize)': '_onResize($event)',
+          }
+        }),
         __metadata('design:paramtypes', [])
     ], AppComponent);
     return AppComponent;
@@ -38879,11 +38897,11 @@ var MyWidgetComponent = (function (_super) {
         this.size = [1, 1];
     }
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(),
         __metadata('design:type', Array)
     ], MyWidgetComponent.prototype, "size", void 0);
     __decorate([
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(),
         __metadata('design:type', String)
     ], MyWidgetComponent.prototype, "widgetId", void 0);
     MyWidgetComponent = __decorate([
@@ -38892,7 +38910,7 @@ var MyWidgetComponent = (function (_super) {
             template: __webpack_require__(596),
             styles: [__webpack_require__(594)],
             providers: [{ provide: __WEBPACK_IMPORTED_MODULE_1__components_widget_widget_component__["a" /* WidgetComponent */], useExisting: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_22" /* forwardRef */])(function () { return MyWidgetComponent; }) }]
-        }), 
+        }),
         __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _b) || Object])
     ], MyWidgetComponent);
     return MyWidgetComponent;
@@ -51498,7 +51516,7 @@ var Ng2DashboardModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_2__widget_widget_component__["a" /* WidgetComponent */]
             ],
             providers: []
-        }), 
+        }),
         __metadata('design:paramtypes', [])
     ], Ng2DashboardModule);
     return Ng2DashboardModule;
@@ -51556,7 +51574,7 @@ var AppModule = (function () {
             ],
             providers: [],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */]]
-        }), 
+        }),
         __metadata('design:paramtypes', [])
     ], AppModule);
     return AppModule;
@@ -52727,7 +52745,7 @@ var $export = __webpack_require__(1)
 $export($export.S + $export.F * !($acosh
   // V8 bug: https://code.google.com/p/v8/issues/detail?id=3509
   && Math.floor($acosh(Number.MAX_VALUE)) == 710
-  // Tor Browser bug: Math.acosh(Infinity) -> NaN 
+  // Tor Browser bug: Math.acosh(Infinity) -> NaN
   && $acosh(Infinity) == Infinity
 ), 'Math', {
   acosh: function acosh(x){
@@ -52749,7 +52767,7 @@ function asinh(x){
   return !isFinite(x = +x) || x == 0 ? x : x < 0 ? -asinh(-x) : Math.log(x + Math.sqrt(x * x + 1));
 }
 
-// Tor Browser bug: Math.asinh(0) -> -0 
+// Tor Browser bug: Math.asinh(0) -> -0
 $export($export.S + $export.F * !($asinh && 1 / $asinh(0) > 0), 'Math', {asinh: asinh});
 
 /***/ },
@@ -52760,7 +52778,7 @@ $export($export.S + $export.F * !($asinh && 1 / $asinh(0) > 0), 'Math', {asinh: 
 var $export = __webpack_require__(1)
   , $atanh  = Math.atanh;
 
-// Tor Browser bug: Math.atanh(-0) -> 0 
+// Tor Browser bug: Math.atanh(-0) -> 0
 $export($export.S + $export.F * !($atanh && 1 / $atanh(-0) < 0), 'Math', {
   atanh: function atanh(x){
     return (x = +x) == 0 ? x : Math.log((1 + x) / (1 - x)) / 2;
@@ -53305,7 +53323,7 @@ $export($export.P + $export.F * ($fails(function(){
 })), 'Number', {
   toPrecision: function toPrecision(precision){
     var that = aNumberValue(this, 'Number#toPrecision: incorrect invocation!');
-    return precision === undefined ? $toPrecision.call(that) : $toPrecision.call(that, precision); 
+    return precision === undefined ? $toPrecision.call(that) : $toPrecision.call(that, precision);
   }
 });
 
@@ -54666,7 +54684,7 @@ module.exports = ""
 /* 595 */
 /***/ function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}}</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
+    module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\" [margin]=\"20\">\n\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}}</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <!--widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </div>\n  <widget [size]=\"[1, 2]\">\n    <div class=\"head\">Widget 2</div>\n  </div>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </div-->\n</dashboard>\n"
 
 /***/ },
 /* 596 */
@@ -55124,7 +55142,7 @@ var Zone$1 = (function (global) {
             enumerable: true,
             configurable: true
         });
-        
+
         Object.defineProperty(Zone, "currentTask", {
             get: function () {
                 return _currentTask;
@@ -55132,7 +55150,7 @@ var Zone$1 = (function (global) {
             enumerable: true,
             configurable: true
         });
-        
+
         Object.defineProperty(Zone.prototype, "parent", {
             get: function () {
                 return this._parent;
@@ -55140,7 +55158,7 @@ var Zone$1 = (function (global) {
             enumerable: true,
             configurable: true
         });
-        
+
         Object.defineProperty(Zone.prototype, "name", {
             get: function () {
                 return this._name;
@@ -55148,7 +55166,7 @@ var Zone$1 = (function (global) {
             enumerable: true,
             configurable: true
         });
-        
+
         Zone.prototype.get = function (key) {
             var zone = this.getZoneWith(key);
             if (zone)
@@ -55257,7 +55275,7 @@ var Zone$1 = (function (global) {
         Zone.__symbol__ = __symbol__;
         return Zone;
     }());
-    
+
     var ZoneDelegate = (function () {
         function ZoneDelegate(zone, parentDelegate, zoneSpec) {
             this._taskCounts = { microTask: 0, macroTask: 0, eventTask: 0 };
@@ -55430,7 +55448,7 @@ var Zone$1 = (function (global) {
     function __symbol__(name) {
         return '__zone_symbol__' + name;
     }
-    
+
     var symbolSetTimeout = __symbol__('setTimeout');
     var symbolPromise = __symbol__('Promise');
     var symbolThen = __symbol__('then');
@@ -56361,7 +56379,7 @@ function patchViaCapturingAllTheEvents() {
     for (var i = 0; i < eventNames.length; i++) {
         _loop_1(i);
     }
-    
+
 }
 
 /**

@@ -9,7 +9,7 @@ import {
   ElementRef,
   QueryList,
   ViewContainerRef,
-  ComponentFactoryResolver, ViewChild
+  ComponentFactoryResolver, ViewChild, OnChanges, SimpleChanges
 } from "@angular/core";
 import {WidgetComponent} from "../widget/widget.component";
 
@@ -26,7 +26,7 @@ import {WidgetComponent} from "../widget/widget.component";
   },
   styles: [require('./dashboard.component.css')]
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements AfterViewInit, OnChanges {
 //	Event Emitters
   @Output() public onDragStart: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
   @Output() public onDrag: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
@@ -53,6 +53,11 @@ export class DashboardComponent implements AfterViewInit {
               private _ngEl: ElementRef,
               private _renderer: Renderer) {
 
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // changes.prop contains the old and the new value...
+    this._calculPositions();
   }
 
   ngAfterViewInit(): void {
@@ -127,7 +132,6 @@ export class DashboardComponent implements AfterViewInit {
       item.setPosition(top, left);
 
       left += item.width + this.margin;
-
     }
   }
 
