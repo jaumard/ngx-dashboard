@@ -74,3 +74,8 @@ import {MyWidgetComponent} from './my-widget/my-widget.component';
 export class AppModule { }
 
 ```
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/badge.svg?style=beer-square)](https://beerpay.io/jaumard/ng2-dashboard)  [![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/make-wish.svg?style=flat-square)](https://beerpay.io/jaumard/ng2-dashboard?focus=wish)
