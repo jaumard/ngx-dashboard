@@ -42,6 +42,8 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   //	Private variables
   private _width: number = 0;
+  private _nbColumn: number = 0;
+  private _columnTops: number[] = [];
   private _isDragging: boolean = false;
   private _currentElement: WidgetComponent;
   private _elements: WidgetComponent[] = [];
@@ -57,16 +59,16 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // changes.prop contains the old and the new value...
+    this._calculSizeAndColumn();
     this._calculPositions();
   }
 
   ngAfterViewInit(): void {
-    this._width = this._ngEl.nativeElement.offsetWidth;
     this._items.forEach(item => {
       item.setEventListener(this.handle, this._onMouseDown.bind(this));
       this._elements.push(item);
     });
-
+    this._calculSizeAndColumn();
     this._offset = {
       top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
       left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft
@@ -113,33 +115,59 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   private _calculPositions(): void {
-    let top = this.margin;
+    let top = 0;
     let left = this.margin;
+
+    this._columnTops = [];
+    let columnIndex = 0;
+    let rowIndex = 0;
+
+    const grid = [];
 
     let items = this._elements;
 
     for (let i = 0; i < items.length; i++) {
       let item = items[i];
 
+      if (!grid[columnIndex]) {
+        grid[columnIndex] = [];
+      }
+
       item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
       item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
 
-      if ((left + item.width + this.margin) > this._width) {
-        left = this.margin;
-        top += item.height + this.margin;
+      if (columnIndex >= this._nbColumn) {
+        columnIndex = 0;
       }
 
-      item.setPosition(top, left);
+      if (!this._columnTops[columnIndex]) this._columnTops[columnIndex] = 0;
 
+      if ((left + item.width + this.margin) > this._width) {
+        left = this.margin;
+        rowIndex++;
+        if (columnIndex < this._nbColumn) {
+          columnIndex++;
+        }
+      }
+      top = this._columnTops[columnIndex] + this.margin;
+
+      item.setPosition(top, left);
+      console.log(this._columnTops, columnIndex, rowIndex);
       left += item.width + this.margin;
+
+      this._columnTops[columnIndex] += top + item.height;
+      columnIndex++;
     }
   }
 
-  private _onResize(e: any): void {
+  private _calculSizeAndColumn(): void {
     this._width = this._ngEl.nativeElement.offsetWidth;
+    this._nbColumn = Math.floor(this._width / (this.widgetsSize[0] + this.margin));
+  }
+
+  private _onResize(e: any): void {
+    this._calculSizeAndColumn();
     this._calculPositions();
-    e.preventDefault();
-    e.stopPropagation();
   }
 
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
