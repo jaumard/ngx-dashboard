@@ -129,10 +129,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
 
     let haveEnoughSpace = column + item.size[0] <= this._nbColumn;
-
     while (lines[column] > 0 || !haveEnoughSpace) {
       column++;
       haveEnoughSpace = column + item.size[0] <= this._nbColumn;
+
       if (column >= this._nbColumn) {
         column = 0;
         for (let i = 0; i < lines.length; i++) {
@@ -141,8 +141,9 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
         row++;
       }
       else {
+        if (!haveEnoughSpace) continue;
         for (let i = 1; i < item.size[0]; i++) {
-          haveEnoughSpace = lines[column + i] > 0;
+          haveEnoughSpace = lines[column + i] <= 0;
           if (!haveEnoughSpace)break;
         }
       }
