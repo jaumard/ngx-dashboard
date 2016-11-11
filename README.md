@@ -8,7 +8,7 @@ Demo at: https://jaumard.github.io/ng2-dashboard/demo/dist/index.html
 ```
 npm i ng2-dashboard
 // or with yarn 
-yarn install ng2-dashboard
+yarn add ng2-dashboard
 ```
 
 ## Usage 
@@ -47,8 +47,6 @@ To dynamically add your widget you also need to declare it under "entryComponent
 ```
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import {Ng2DashboardModule} from 'ng2-dashboard';
 
 import { AppComponent } from './app.component';
@@ -64,8 +62,6 @@ import {MyWidgetComponent} from './my-widget/my-widget.component';
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    HttpModule,
     Ng2DashboardModule
   ],
   providers: [],
