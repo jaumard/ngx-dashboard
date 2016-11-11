@@ -6,14 +6,20 @@
 <dashboard (onDragStart)="log($event, 'ondragstart')" (onDragEnd)="log($event, 'ondragend')"
            (onDrag)="log($event, 'ondragmove')" class="dashboard" [widgetsSize]="widgetsSize" [margin]="20">
 
+  <widget [size]="[2, 1]" widgetId="large">
+    <div class="head">Large widget [2, 1]</div>
+  </widget>
   <widget [size]="[1, 2]" widgetId="tall">
-    <div class="head">Widget 2</div>
+    <div class="head">Tall widget [1, 2]</div>
+  </widget>
+  <widget widgetId="small">
+    <div class="head">Small widget [1, 1]</div>
   </widget>
   <widget [size]="[2, 2]" widgetId="big">
-    <div class="head">Widget 3</div>
+    <div class="head">Big widget [2, 2]</div>
   </widget>
   <widget *ngFor="let item of [1, 2, 3, 4, 5, 6]; let i = index;" [widgetId]="i">
-    <div class="head">Widget {{i}}</div>
+    <div class="head">Widget {{i}} [1, 1]</div>
     <div class="close" (click)="close($event, i)">X</div>
   </widget>
 
