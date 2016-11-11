@@ -9,7 +9,10 @@ import {
   ElementRef,
   QueryList,
   ViewContainerRef,
-  ComponentFactoryResolver, ViewChild, OnChanges, SimpleChanges
+  ComponentFactoryResolver,
+  ViewChild,
+  OnChanges,
+  SimpleChanges
 } from "@angular/core";
 import {WidgetComponent} from "../widget/widget.component";
 
@@ -128,10 +131,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
     item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
 
-    let haveEnoughSpace = column + item.size[0] <= this._nbColumn;
+    let haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
     while (lines[column] > 0 || !haveEnoughSpace) {
       column++;
-      haveEnoughSpace = column + item.size[0] <= this._nbColumn;
+      haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
 
       if (column >= this._nbColumn) {
         column = 0;
@@ -139,20 +142,16 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
           lines[i]--;
         }
         row++;
+        haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
       }
-      else {
-        if (!haveEnoughSpace) continue;
-        for (let i = 1; i < item.size[0]; i++) {
-          haveEnoughSpace = lines[column + i] <= 0;
-          if (!haveEnoughSpace)break;
-        }
+
+      if (!haveEnoughSpace) continue;
+      for (let i = 1; i < item.size[0]; i++) {
+        haveEnoughSpace = lines[column + i] <= 0;
+        if (!haveEnoughSpace)break;
       }
     }
 
-    //console.log('col', haveEnoughSpace, column, lines[column]);
-    //if (item.widgetId == "big") {
-    console.log(column, row, lines, haveEnoughSpace);
-    //}
     const left = column * this.widgetsSize[0] + column * this.margin;
     const top = row * this.widgetsSize[1] + row * this.margin;
 
@@ -161,40 +160,8 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       lines[column + i] = item.size[1];
     }
 
-    column += item.size[0];
-    if (column >= this._nbColumn) {
-      column = 0;
-      row++;
-      for (let i = 0; i < lines.length; i++) {
-        lines[i]--;
-      }
-    }
-
     item.setPosition(top, left);
     this._positionWidget(lines, items, index + 1, column, row);
-  }
-
-  private _calculPositions(): void {
-    let top = this.margin;
-    let left = this.margin;
-
-    let items = this._elements;
-
-    for (let i = 0; i < items.length; i++) {
-      let item = items[i];
-
-      item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
-      item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
-
-      if ((left + item.width + this.margin) > this._width) {
-        left = this.margin;
-        top += item.height + this.margin;
-      }
-
-      item.setPosition(top, left);
-
-      left += item.width + this.margin;
-    }
   }
 
   private _calculSizeAndColumn(): void {
