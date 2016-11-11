@@ -34,7 +34,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   @Input() margin: number = 10;
   @Input() handle: string;
-  @Input() widgetsSize: number[] = [300, 300];
+  @Input() widgetsSize: number[] = [150, 150];
 
   //	Public variables
   public dragEnable: boolean = true;
@@ -43,7 +43,6 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   //	Private variables
   private _width: number = 0;
   private _nbColumn: number = 0;
-  private _columnTops: number[] = [];
   private _isDragging: boolean = false;
   private _currentElement: WidgetComponent;
   private _elements: WidgetComponent[] = [];
@@ -60,7 +59,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // changes.prop contains the old and the new value...
     this._calculSizeAndColumn();
-    this._calculPositions();
+    this._newCalculPositions();
   }
 
   ngAfterViewInit(): void {
@@ -73,7 +72,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
       left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft
     };
-    this._calculPositions();
+    this._newCalculPositions();
   }
 
   public enableDrag(): void {
@@ -89,7 +88,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     const ref = this._viewCntRef.createComponent(factory);
     ref.instance.setEventListener(this.handle, this._onMouseDown.bind(this));
     this._elements.push(ref.instance);
-    this._calculPositions();
+    this._newCalculPositions();
   }
 
   public removeItem(ngItem: WidgetComponent): void {
@@ -110,53 +109,90 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._enableAnimation();
     widget.removeFromParent();
     this._elements = this._elements.filter((item, i) => item !== widget);
-    this._calculPositions();
+    this._newCalculPositions();
     this._disableAnimation();
   }
 
+  private _newCalculPositions(): void {
+    const lines = [];
+    for (let i = 0; i < this._nbColumn; i++) {
+      lines[i] = 0;
+    }
+    this._positionWidget(lines, this._elements, 0, 0, 0)
+  }
+
+  private _positionWidget(lines, items, index, column, row): void {
+    if (!items[index]) return;
+
+    const item = items[index];
+    item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
+    item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
+
+    let haveEnoughSpace = column + item.size[0] <= this._nbColumn;
+
+    while (lines[column] > 0 || !haveEnoughSpace) {
+      column++;
+      haveEnoughSpace = column + item.size[0] <= this._nbColumn;
+      if (column >= this._nbColumn) {
+        column = 0;
+        for (let i = 0; i < lines.length; i++) {
+          lines[i]--;
+        }
+        row++;
+      }
+      else {
+        for (let i = 1; i < item.size[0]; i++) {
+          haveEnoughSpace = lines[column + i] > 0;
+          if (!haveEnoughSpace)break;
+        }
+      }
+    }
+
+    //console.log('col', haveEnoughSpace, column, lines[column]);
+    //if (item.widgetId == "big") {
+    console.log(column, row, lines, haveEnoughSpace);
+    //}
+    const left = column * this.widgetsSize[0] + column * this.margin;
+    const top = row * this.widgetsSize[1] + row * this.margin;
+
+    lines[column] = item.size[1];
+    for (var i = 1; i < item.size[0]; i++) {
+      lines[column + i] = item.size[1];
+    }
+
+    column += item.size[0];
+    if (column >= this._nbColumn) {
+      column = 0;
+      row++;
+      for (let i = 0; i < lines.length; i++) {
+        lines[i]--;
+      }
+    }
+
+    item.setPosition(top, left);
+    this._positionWidget(lines, items, index + 1, column, row);
+  }
+
   private _calculPositions(): void {
-    let top = 0;
+    let top = this.margin;
     let left = this.margin;
-
-    this._columnTops = [];
-    let columnIndex = 0;
-    let rowIndex = 0;
-
-    const grid = [];
 
     let items = this._elements;
 
     for (let i = 0; i < items.length; i++) {
       let item = items[i];
 
-      if (!grid[columnIndex]) {
-        grid[columnIndex] = [];
-      }
-
       item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
       item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
 
-      if (columnIndex >= this._nbColumn) {
-        columnIndex = 0;
-      }
-
-      if (!this._columnTops[columnIndex]) this._columnTops[columnIndex] = 0;
-
       if ((left + item.width + this.margin) > this._width) {
         left = this.margin;
-        rowIndex++;
-        if (columnIndex < this._nbColumn) {
-          columnIndex++;
-        }
+        top += item.height + this.margin;
       }
-      top = this._columnTops[columnIndex] + this.margin;
 
       item.setPosition(top, left);
-      console.log(this._columnTops, columnIndex, rowIndex);
-      left += item.width + this.margin;
 
-      this._columnTops[columnIndex] += top + item.height;
-      columnIndex++;
+      left += item.width + this.margin;
     }
   }
 
@@ -167,7 +203,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   private _onResize(e: any): void {
     this._calculSizeAndColumn();
-    this._calculPositions();
+    this._newCalculPositions();
   }
 
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
@@ -196,7 +232,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       let top = pos.top - this._offset.top;
 
       this._elements.sort(this._compare);
-      this._calculPositions();
+      this._newCalculPositions();
       this._currentElement.setPosition(top, left);
 
       if (this._isTouchEvent(e)) {
@@ -217,7 +253,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       }
       this._currentElement = null;
       this._offset = null;
-      this._calculPositions();
+      this._newCalculPositions();
       this._disableAnimation();
       if (this._isTouchEvent(e)) {
         e.preventDefault();
