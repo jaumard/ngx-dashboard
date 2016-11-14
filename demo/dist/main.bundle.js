@@ -38570,6 +38570,13 @@ var DashboardComponent = (function () {
             return 0;
         };
     }
+    Object.defineProperty(DashboardComponent.prototype, "width", {
+        get: function () {
+            return this._ngEl.nativeElement.offsetWidth;
+        },
+        enumerable: true,
+        configurable: true
+    });
     DashboardComponent.prototype.ngOnChanges = function (changes) {
         // changes.prop contains the old and the new value...
         this._calculSizeAndColumn();
@@ -38857,16 +38864,19 @@ var AppComponent = (function () {
         this.title = 'app works!';
         this.widgetsSize = [300, 150];
         this.dashboardMargin = 20;
-        this._onResize(null);
     }
+    AppComponent.prototype.ngOnInit = function () {
+        this._onResize(null);
+    };
     AppComponent.prototype._onResize = function (event) {
         if (window.innerWidth < 750) {
-            this.widgetsSize = [150, 150];
             this.dashboardMargin = 10;
+            this.widgetsSize = [this.dashboard.width / 2 - this.dashboardMargin, 150];
         }
         else {
-            this.widgetsSize = [300, 150];
             this.dashboardMargin = 20;
+            var nbColumn = Math.floor(this.dashboard.width / (300 + this.dashboardMargin));
+            this.widgetsSize = [this.dashboard.width / nbColumn - this.dashboardMargin, 150];
         }
     };
     AppComponent.prototype.log = function (widget, type) {
