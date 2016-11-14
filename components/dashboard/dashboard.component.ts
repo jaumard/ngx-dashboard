@@ -62,7 +62,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // changes.prop contains the old and the new value...
     this._calculSizeAndColumn();
-    this._newCalculPositions();
+    this._calculPositions();
   }
 
   ngAfterViewInit(): void {
@@ -75,7 +75,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
       left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft
     };
-    this._newCalculPositions();
+    this._calculPositions();
   }
 
   public enableDrag(): void {
@@ -91,7 +91,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     const ref = this._viewCntRef.createComponent(factory);
     ref.instance.setEventListener(this.handle, this._onMouseDown.bind(this));
     this._elements.push(ref.instance);
-    this._newCalculPositions();
+    this._calculPositions();
   }
 
   public removeItem(ngItem: WidgetComponent): void {
@@ -112,11 +112,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._enableAnimation();
     widget.removeFromParent();
     this._elements = this._elements.filter((item, i) => item !== widget);
-    this._newCalculPositions();
+    this._calculPositions();
     this._disableAnimation();
   }
 
-  private _newCalculPositions(): void {
+  private _calculPositions(): void {
     const lines = [];
     for (let i = 0; i < this._nbColumn; i++) {
       lines[i] = 0;
@@ -125,7 +125,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   private _positionWidget(lines, items, index, column, row): void {
-    if (!items[index]) return;
+    if (!items[index]) {
+      const height = (row + 1) * this.widgetsSize[1] + row * this.margin;
+      this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
+      return;
+    }
 
     const item = items[index];
     item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
@@ -171,12 +175,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   private _onResize(e: any): void {
     this._calculSizeAndColumn();
-    this._newCalculPositions();
+    this._calculPositions();
   }
 
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
     this._isDragging = this.dragEnable && e.target === widget.el;
-    console.log('_onMouseDown');
     if (this._isDragging) {
       this.onDragStart.emit(widget);
       widget.addClass('active');
@@ -200,7 +203,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       let top = pos.top - this._offset.top;
 
       this._elements.sort(this._compare);
-      this._newCalculPositions();
+      this._calculPositions();
       this._currentElement.setPosition(top, left);
 
       if (this._isTouchEvent(e)) {
@@ -221,7 +224,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       }
       this._currentElement = null;
       this._offset = null;
-      this._newCalculPositions();
+      this._calculPositions();
       this._disableAnimation();
       if (this._isTouchEvent(e)) {
         e.preventDefault();

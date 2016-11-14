@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild} from "@angular/core";
 import {DashboardComponent} from "../../../components/dashboard/dashboard.component";
 import {WidgetComponent} from "../../../components/widget/widget.component";
 import {MyWidgetComponent} from "./my-widget/my-widget.component";
@@ -14,7 +14,8 @@ import {MyWidgetComponent} from "./my-widget/my-widget.component";
 export class AppComponent {
   title = 'app works!';
   @ViewChild(DashboardComponent) dashboard;
-  widgetsSize: number[] = [300, 300];
+  widgetsSize: number[] = [300, 150];
+  dashboardMargin: number = 20;
 
   constructor() {
 
@@ -23,9 +24,11 @@ export class AppComponent {
   private _onResize(event: any) {
     if (window.innerWidth < 750) {
       this.widgetsSize = [150, 150];
+      this.dashboardMargin = 10;
     }
     else {
       this.widgetsSize = [300, 150];
+      this.dashboardMargin = 20;
     }
   }
 
@@ -34,7 +37,6 @@ export class AppComponent {
   }
 
   addWidget() {
-    console.log('test');
     this.dashboard.addItem(MyWidgetComponent);
   }
 

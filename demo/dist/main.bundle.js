@@ -38573,7 +38573,7 @@ var DashboardComponent = (function () {
     DashboardComponent.prototype.ngOnChanges = function (changes) {
         // changes.prop contains the old and the new value...
         this._calculSizeAndColumn();
-        this._newCalculPositions();
+        this._calculPositions();
     };
     DashboardComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -38586,7 +38586,7 @@ var DashboardComponent = (function () {
             top: this._ngEl.nativeElement.offsetY || this._ngEl.nativeElement.offsetTop,
             left: this._ngEl.nativeElement.offsetX || this._ngEl.nativeElement.offsetLeft
         };
-        this._newCalculPositions();
+        this._calculPositions();
     };
     DashboardComponent.prototype.enableDrag = function () {
         this.dragEnable = true;
@@ -38599,7 +38599,7 @@ var DashboardComponent = (function () {
         var ref = this._viewCntRef.createComponent(factory);
         ref.instance.setEventListener(this.handle, this._onMouseDown.bind(this));
         this._elements.push(ref.instance);
-        this._newCalculPositions();
+        this._calculPositions();
     };
     DashboardComponent.prototype.removeItem = function (ngItem) {
         this._removeElement(ngItem);
@@ -38616,10 +38616,10 @@ var DashboardComponent = (function () {
         this._enableAnimation();
         widget.removeFromParent();
         this._elements = this._elements.filter(function (item, i) { return item !== widget; });
-        this._newCalculPositions();
+        this._calculPositions();
         this._disableAnimation();
     };
-    DashboardComponent.prototype._newCalculPositions = function () {
+    DashboardComponent.prototype._calculPositions = function () {
         var lines = [];
         for (var i = 0; i < this._nbColumn; i++) {
             lines[i] = 0;
@@ -38627,8 +38627,11 @@ var DashboardComponent = (function () {
         this._positionWidget(lines, this._elements, 0, 0, 0);
     };
     DashboardComponent.prototype._positionWidget = function (lines, items, index, column, row) {
-        if (!items[index])
+        if (!items[index]) {
+            var height = (row + 1) * this.widgetsSize[1] + row * this.margin;
+            this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
             return;
+        }
         var item = items[index];
         item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
         item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
@@ -38667,11 +38670,10 @@ var DashboardComponent = (function () {
     };
     DashboardComponent.prototype._onResize = function (e) {
         this._calculSizeAndColumn();
-        this._newCalculPositions();
+        this._calculPositions();
     };
     DashboardComponent.prototype._onMouseDown = function (e, widget) {
         this._isDragging = this.dragEnable && e.target === widget.el;
-        console.log('_onMouseDown');
         if (this._isDragging) {
             this.onDragStart.emit(widget);
             widget.addClass('active');
@@ -38692,7 +38694,7 @@ var DashboardComponent = (function () {
             var left = pos.left - this._offset.left;
             var top = pos.top - this._offset.top;
             this._elements.sort(this._compare);
-            this._newCalculPositions();
+            this._calculPositions();
             this._currentElement.setPosition(top, left);
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
@@ -38711,7 +38713,7 @@ var DashboardComponent = (function () {
             }
             this._currentElement = null;
             this._offset = null;
-            this._newCalculPositions();
+            this._calculPositions();
             this._disableAnimation();
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
@@ -38853,21 +38855,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var AppComponent = (function () {
     function AppComponent() {
         this.title = 'app works!';
-        this.widgetsSize = [300, 300];
+        this.widgetsSize = [300, 150];
+        this.dashboardMargin = 20;
     }
     AppComponent.prototype._onResize = function (event) {
         if (window.innerWidth < 750) {
             this.widgetsSize = [150, 150];
+            this.dashboardMargin = 10;
         }
         else {
             this.widgetsSize = [300, 150];
+            this.dashboardMargin = 20;
         }
     };
     AppComponent.prototype.log = function (widget, type) {
         console.log(widget, type);
     };
     AppComponent.prototype.addWidget = function () {
-        console.log('test');
         this.dashboard.addItem(__WEBPACK_IMPORTED_MODULE_2__my_widget_my_widget_component__["a" /* MyWidgetComponent */]);
     };
     AppComponent.prototype.close = function (e, id) {
@@ -54712,7 +54716,7 @@ module.exports = ""
 /* 595 */
 /***/ function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\" [margin]=\"20\">\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div class=\"head\">Large widget [2, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div class=\"head\">Tall widget [1, 2]</div>\n  </widget>\n  <widget widgetId=\"small\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <!--app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </widget>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </widget-->\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\" [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div class=\"head\">Large widget [2, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div class=\"head\">Tall widget [1, 2]</div>\n  </widget>\n  <widget widgetId=\"small\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <!--app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </widget>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </widget-->\n</dashboard>\n"
 
 /***/ },
 /* 596 */
