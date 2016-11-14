@@ -5,7 +5,7 @@ Demo at: https://jaumard.github.io/ng2-dashboard/demo/dist/index.html
 
 ## Installation 
 
-```
+```js
 npm i ng2-dashboard
 // or with yarn 
 yarn add ng2-dashboard
@@ -18,7 +18,7 @@ See demo source code here: https://github.com/jaumard/ng2-dashboard/tree/master/
 ### Create my own widget
 To do this you need to extend the WidgetComponent like this: 
 
-```
+```js
 import {Component, Renderer, ElementRef, forwardRef} from "@angular/core";
 import {WidgetComponent} from "ng2-dashboard";
 
@@ -44,7 +44,7 @@ The `@Input()` is also mandatory if you want to use `removeById` because angular
 
 To dynamically add your widget you also need to declare it under "entryComponents" on your app module like this: 
 
-```
+```js
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {Ng2DashboardModule} from 'ng2-dashboard';
