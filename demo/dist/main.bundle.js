@@ -38577,6 +38577,13 @@ var DashboardComponent = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(DashboardComponent.prototype, "height", {
+        get: function () {
+            return this._ngEl.nativeElement.offsetHeight;
+        },
+        enumerable: true,
+        configurable: true
+    });
     DashboardComponent.prototype.ngOnChanges = function (changes) {
         // changes.prop contains the old and the new value...
         this._calculSizeAndColumn();
