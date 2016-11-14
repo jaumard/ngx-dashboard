@@ -1,4 +1,4 @@
-import {Component, ViewChild} from "@angular/core";
+import {Component, ViewChild, OnInit} from "@angular/core";
 import {DashboardComponent} from "../../../components/dashboard/dashboard.component";
 import {WidgetComponent} from "../../../components/widget/widget.component";
 import {MyWidgetComponent} from "./my-widget/my-widget.component";
@@ -11,24 +11,29 @@ import {MyWidgetComponent} from "./my-widget/my-widget.component";
     '(window:resize)': '_onResize($event)',
   }
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'app works!';
   @ViewChild(DashboardComponent) dashboard;
   widgetsSize: number[] = [300, 150];
   dashboardMargin: number = 20;
 
   constructor() {
+
+  }
+
+  ngOnInit(): void {
     this._onResize(null)
   }
 
   private _onResize(event: any) {
     if (window.innerWidth < 750) {
-      this.widgetsSize = [150, 150];
       this.dashboardMargin = 10;
+      this.widgetsSize = [this.dashboard.width / 2 - this.dashboardMargin, 150];
     }
     else {
-      this.widgetsSize = [300, 150];
       this.dashboardMargin = 20;
+      const nbColumn = Math.floor(this.dashboard.width / (300 + this.dashboardMargin));
+      this.widgetsSize = [this.dashboard.width / nbColumn - this.dashboardMargin, 150];
     }
   }
 

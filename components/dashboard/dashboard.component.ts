@@ -59,6 +59,14 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   }
 
+  get width() {
+    return this._ngEl.nativeElement.offsetWidth;
+  }
+
+  get height() {
+    return this._ngEl.nativeElement.offsetHeight;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     // changes.prop contains the old and the new value...
     this._calculSizeAndColumn();
