@@ -18,7 +18,7 @@ export class AppComponent {
   dashboardMargin: number = 20;
 
   constructor() {
-
+    this._onResize(null)
   }
 
   private _onResize(event: any) {

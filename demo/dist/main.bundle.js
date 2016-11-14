@@ -38857,6 +38857,7 @@ var AppComponent = (function () {
         this.title = 'app works!';
         this.widgetsSize = [300, 150];
         this.dashboardMargin = 20;
+        this._onResize(null);
     }
     AppComponent.prototype._onResize = function (event) {
         if (window.innerWidth < 750) {
@@ -54716,7 +54717,7 @@ module.exports = ""
 /* 595 */
 /***/ function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\" [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div class=\"head\">Large widget [2, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div class=\"head\">Tall widget [1, 2]</div>\n  </widget>\n  <widget widgetId=\"small\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <!--app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </widget>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </widget-->\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\"\n           [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div class=\"head\">Large widget [2, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div class=\"head\">Tall widget [1, 2]</div>\n  </widget>\n  <widget widgetId=\"small\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <!--app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </widget>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </widget-->\n</dashboard>\n"
 
 /***/ },
 /* 596 */
