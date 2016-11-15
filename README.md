@@ -71,6 +71,17 @@ export class AppModule { }
 
 ```
 
+### Use custom drag handle
+
+To do this, you can use the `widgetHandle` directive to select witch handle you want from your template. Example:
+  
+```html
+<widget [size]="[2, 1]" widgetId="large">
+    <div widgetHandle class="head handle">Large widget [2, 1] handle only on this text</div>
+    <div>All other stuff...</div>
+</widget>
+```
+
 ## License
 [MIT](https://github.com/jaumard/trailpack-passport/blob/master/LICENSE)
 
