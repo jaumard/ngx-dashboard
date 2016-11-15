@@ -1,4 +1,5 @@
-import {Component, OnInit, Renderer, Input, ElementRef} from '@angular/core';
+import {Component, OnInit, Renderer, Input, ElementRef, ContentChild} from "@angular/core";
+import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
 
 @Component({
   selector: 'widget',
@@ -7,6 +8,7 @@ import {Component, OnInit, Renderer, Input, ElementRef} from '@angular/core';
 export class WidgetComponent implements OnInit {
   @Input() public size: number[] = [1, 1];
   @Input() public widgetId: string;
+  @ContentChild(WidgetHandleDirective) handle;
 
   constructor(private _ngEl: ElementRef,
               private _renderer: Renderer) {
@@ -16,7 +18,7 @@ export class WidgetComponent implements OnInit {
     this._renderer.setElementClass(this._ngEl.nativeElement, 'widget', true);
   }
 
-  public get el() {
+  public get element() {
     return this._ngEl.nativeElement;
   }
 
@@ -45,9 +47,10 @@ export class WidgetComponent implements OnInit {
     this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
   }
 
-  public setEventListener(handle: string, cbMouse: Function): void {
-    if (handle) {
-
+  public setEventListener(cbMouse: Function): void {
+    if (this.handle) {
+      this._renderer.listen(this.handle.element, 'mousedown', (e) => cbMouse(e, this));
+      this._renderer.listen(this.handle.element, 'touchstart', (e) => cbMouse(e, this));
     }
     else {
       this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cbMouse(e, this));
@@ -66,5 +69,9 @@ export class WidgetComponent implements OnInit {
   removeFromParent() {
     const el: HTMLElement = this._ngEl.nativeElement;
     el.parentNode.removeChild(el);
+  }
+
+  getHandle() {
+    return this.handle ? this.handle.element : this.element;
   }
 }

@@ -8,18 +8,18 @@
            [margin]="dashboardMargin">
 
   <widget [size]="[2, 1]" widgetId="large">
-    <div class="head">Large widget [2, 1]</div>
+    <div widgetHandle class="head handle">Large widget [2, 1] handle only on text</div>
   </widget>
   <widget [size]="[1, 2]" widgetId="tall">
-    <div class="head">Tall widget [1, 2]</div>
+    <div widgetHandle class="head handle">Tall widget [1, 2] handle only on text</div>
   </widget>
-  <widget widgetId="small">
+  <widget widgetId="small" class="handle">
     <div class="head">Small widget [1, 1]</div>
   </widget>
-  <widget [size]="[2, 2]" widgetId="big">
+  <widget [size]="[2, 2]" widgetId="big" class="handle">
     <div class="head">Big widget [2, 2]</div>
   </widget>
-  <widget *ngFor="let item of [1, 2, 3, 4, 5, 6]; let i = index;" [widgetId]="i">
+  <widget *ngFor="let item of [1, 2, 3, 4, 5, 6]; let i = index;" [widgetId]="i" class="handle">
     <div class="head">Widget {{i}} [1, 1]</div>
     <div class="close" (click)="close($event, i)">X</div>
   </widget>

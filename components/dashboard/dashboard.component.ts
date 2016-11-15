@@ -36,7 +36,6 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   @Output() public onDragEnd: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
 
   @Input() margin: number = 10;
-  @Input() handle: string;
   @Input() widgetsSize: number[] = [150, 150];
 
   //	Public variables
@@ -75,7 +74,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   ngAfterViewInit(): void {
     this._items.forEach(item => {
-      item.setEventListener(this.handle, this._onMouseDown.bind(this));
+      item.setEventListener(this._onMouseDown.bind(this));
       this._elements.push(item);
     });
     this._calculSizeAndColumn();
@@ -97,7 +96,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   public addItem(ngItem: { new(): WidgetComponent}): void {
     let factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
     const ref = this._viewCntRef.createComponent(factory);
-    ref.instance.setEventListener(this.handle, this._onMouseDown.bind(this));
+    ref.instance.setEventListener(this._onMouseDown.bind(this));
     this._elements.push(ref.instance);
     this._calculPositions();
   }
@@ -187,7 +186,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
-    this._isDragging = this.dragEnable && e.target === widget.el;
+    this._isDragging = this.dragEnable && e.target === widget.getHandle();
     if (this._isDragging) {
       this.onDragStart.emit(widget);
       widget.addClass('active');
@@ -281,20 +280,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private _getAbsoluteMousePosition(e: any): any {
-    e = this._manageEvent(e);
-
-    return {
-      left: e.clientX,
-      top: e.clientY
-    };
-  }
-
   private _compare = function (widget1, widget2) {
-    if (widget1.offset.top > widget2.offset.top + widget2.height) {
+    if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
       return +1;
     }
-    if (widget2.offset.top > widget1.offset.top + widget1.height) {
+    if (widget2.offset.top > widget1.offset.top + widget1.height / 2) {
       return -1;
     }
     if ((widget1.offset.left + (widget1.width / 2)) > (widget2.offset.left + (widget2.width / 2))) {
@@ -319,6 +309,6 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       this._elements.forEach(item => {
         item.removeClass('animate');
       });
-    }, 500);
+    }, 400);
   }
 }

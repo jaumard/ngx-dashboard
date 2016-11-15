@@ -12,3 +12,7 @@
   right: 5px;
   cursor: pointer;
 }
+
+.handle {
+  cursor: move;
+}
