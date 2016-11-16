@@ -12,7 +12,8 @@ import {
   ComponentFactoryResolver,
   ViewChild,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  Type
 } from "@angular/core";
 import {WidgetComponent} from "../widget/widget.component";
 
@@ -37,20 +38,22 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   @Input() margin: number = 10;
   @Input() widgetsSize: number[] = [150, 150];
+  @Input() THRESHOLD: number = 10;
 
   //	Public variables
   public dragEnable: boolean = true;
-  @ViewChild('target', {read: ViewContainerRef}) _viewCntRef;
+  @ViewChild('target', {read: ViewContainerRef}) private _viewCntRef: ViewContainerRef;
 
   //	Private variables
   private _width: number = 0;
   private _nbColumn: number = 0;
+  private _previousPosition: any = {top: 0, left: 0};
   private _isDragging: boolean = false;
   private _currentElement: WidgetComponent;
   private _elements: WidgetComponent[] = [];
   private _offset: any;
 
-  @ContentChildren(WidgetComponent) _items: QueryList<WidgetComponent>;
+  @ContentChildren(WidgetComponent) private _items: QueryList<WidgetComponent>;
 
   constructor(private _componentFactoryResolver: ComponentFactoryResolver,
               private _ngEl: ElementRef,
@@ -93,31 +96,42 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this.dragEnable = false;
   }
 
-  public addItem(ngItem: { new(): WidgetComponent}): void {
+  public addItem<T extends WidgetComponent>(ngItem: Type<T>): T {
     let factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
     const ref = this._viewCntRef.createComponent(factory);
-    ref.instance.setEventListener(this._onMouseDown.bind(this));
-    this._elements.push(ref.instance);
+    const newItem: T = ref.instance as T;
+    newItem.setEventListener(this._onMouseDown.bind(this));
+    this._elements.push(newItem);
     this._calculPositions();
+    return newItem;
+  }
+
+  public clearItems(): void {
+    this._viewCntRef.clear();
+    this._elements = [];
+  }
+
+  private _getElementIndex(ngItem: WidgetComponent): number {
+    return this._elements.indexOf(ngItem);
   }
 
   public removeItem(ngItem: WidgetComponent): void {
-    this._removeElement(ngItem);
+    this._removeElement(ngItem, this._getElementIndex(ngItem));
   }
 
-  public removeItemByIndex(index: Number): void {
+  public removeItemByIndex(index: number): void {
     const element = this._elements.find((item, i) => i === index);
-    this._removeElement(element);
+    this._removeElement(element, index);
   }
 
   public removeItemById(id: string): void {
     const element = this._elements.find(item => item.widgetId === id);
-    this._removeElement(element);
+    this._removeElement(element, this._getElementIndex(element));
   }
 
-  private _removeElement(widget: WidgetComponent) {
+  private _removeElement(widget: WidgetComponent, index: number): void {
     this._enableAnimation();
-    widget.removeFromParent();
+    this._viewCntRef.remove(index);
     this._elements = this._elements.filter((item, i) => item !== widget);
     this._calculPositions();
     this._disableAnimation();
@@ -186,7 +200,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
-    this._isDragging = this.dragEnable && e.target === widget.getHandle();
+    this._isDragging = this.dragEnable && e.target === widget.handle;
     if (this._isDragging) {
       this.onDragStart.emit(widget);
       widget.addClass('active');
@@ -206,13 +220,17 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     if (this._isDragging) {
       this.onDrag.emit(this._currentElement);
       const pos = this._getMousePosition(e);
+
       let left = pos.left - this._offset.left;
       let top = pos.top - this._offset.top;
 
-      this._elements.sort(this._compare);
-      this._calculPositions();
+      if (Math.abs(pos.top - this._previousPosition.top) > this.THRESHOLD
+        || Math.abs(pos.left - this._previousPosition.left) > this.THRESHOLD) {
+        this._elements.sort(this._compare);
+        this._calculPositions();
+        this._previousPosition = pos;
+      }
       this._currentElement.setPosition(top, left);
-
       if (this._isTouchEvent(e)) {
         e.preventDefault();
         e.stopPropagation();
@@ -280,7 +298,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private _compare = function (widget1, widget2) {
+  private _compare(widget1, widget2): number {
     if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
       return +1;
     }
@@ -296,7 +314,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     return 0;
   };
 
-  private _enableAnimation() {
+  private _enableAnimation(): void {
     this._elements.forEach(item => {
       if (item != this._currentElement) {
         item.addClass('animate');
@@ -304,7 +322,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     });
   }
 
-  private _disableAnimation() {
+  private _disableAnimation(): void {
     setTimeout(() => {
       this._elements.forEach(item => {
         item.removeClass('animate');

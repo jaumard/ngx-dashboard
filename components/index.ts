@@ -1,15 +1,18 @@
-import {NgModule} from '@angular/core';
+import {NgModule} from "@angular/core";
 import {DashboardComponent} from "../components/dashboard/dashboard.component";
 import {WidgetComponent} from "./widget/widget.component";
+import {WidgetHandleDirective} from "../directives/widget-handle.directive";
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetHandleDirective
   ],
   exports: [
     DashboardComponent,
-    WidgetComponent
+    WidgetComponent,
+    WidgetHandleDirective
   ],
   providers: []
 })

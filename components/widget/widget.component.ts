@@ -8,29 +8,29 @@ import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
 export class WidgetComponent implements OnInit {
   @Input() public size: number[] = [1, 1];
   @Input() public widgetId: string;
-  @ContentChild(WidgetHandleDirective) handle;
+  @ContentChild(WidgetHandleDirective) protected _handle: WidgetHandleDirective;
 
-  constructor(private _ngEl: ElementRef,
-              private _renderer: Renderer) {
+  constructor(protected _ngEl: ElementRef,
+              protected _renderer: Renderer) {
   }
 
   ngOnInit(): void {
     this._renderer.setElementClass(this._ngEl.nativeElement, 'widget', true);
   }
 
-  public get element() {
+  public get element(): any {
     return this._ngEl.nativeElement;
   }
 
-  public get offset() {
+  public get offset(): any {
     return this._ngEl.nativeElement.getBoundingClientRect();
   }
 
-  public get width() {
+  public get width(): number {
     return this._ngEl.nativeElement.offsetWidth;
   }
 
-  public get height() {
+  public get height(): number {
     return this._ngEl.nativeElement.offsetHeight;
   }
 
@@ -48,9 +48,9 @@ export class WidgetComponent implements OnInit {
   }
 
   public setEventListener(cbMouse: Function): void {
-    if (this.handle) {
-      this._renderer.listen(this.handle.element, 'mousedown', (e) => cbMouse(e, this));
-      this._renderer.listen(this.handle.element, 'touchstart', (e) => cbMouse(e, this));
+    if (this._handle) {
+      this._renderer.listen(this._handle.element, 'mousedown', (e) => cbMouse(e, this));
+      this._renderer.listen(this._handle.element, 'touchstart', (e) => cbMouse(e, this));
     }
     else {
       this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cbMouse(e, this));
@@ -58,20 +58,15 @@ export class WidgetComponent implements OnInit {
     }
   }
 
-  addClass(myClass: string) {
+  addClass(myClass: string): void {
     this._renderer.setElementClass(this._ngEl.nativeElement, myClass, true);
   }
 
-  removeClass(myClass: string) {
+  removeClass(myClass: string): void {
     this._renderer.setElementClass(this._ngEl.nativeElement, myClass, false);
   }
 
-  removeFromParent() {
-    const el: HTMLElement = this._ngEl.nativeElement;
-    el.parentNode.removeChild(el);
-  }
-
-  getHandle() {
-    return this.handle ? this.handle.element : this.element;
+  get handle(): any {
+    return this._handle ? this._handle.element : this.element;
   }
 }
