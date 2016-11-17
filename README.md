@@ -100,7 +100,7 @@ Hey dude! Help me out for a couple of :beers:!
 [npm-image]: https://img.shields.io/npm/v/ng2-dashboard.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/ng2-dashboard
 [npm-download]: https://img.shields.io/npm/dt/ng2-dashboard.svg
-[daviddm-image]: http://img.shields.io/david/jaumard/ng2-dashboard.svg?style=flat-square
+[daviddm-image]: https://david-dm.org/jaumard/ng2-dashboard/status.svg
 [daviddm-url]: https://david-dm.org/jaumard/ng2-dashboard
 [codeclimate-image]: https://img.shields.io/codeclimate/github/jaumard/ng2-dashboard.svg?style=flat-square
 [codeclimate-url]: https://codeclimate.com/github/jaumard/ng2-dashboard
