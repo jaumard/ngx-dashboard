@@ -1,6 +1,13 @@
 # ng2-dashboard
 Dashboard library for angular 2
 
+[![NPM version][npm-image]][npm-url]
+[![NPM downloads][npm-download]][npm-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
+[![Code Climate][codeclimate-image]][codeclimate-url]
+[![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/badge.svg?style=flat)](https://beerpay.io/jaumard/ng2-dashboard)
+[![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/make-wish.svg?style=flat)](https://beerpay.io/jaumard/ng2-dashboard)
+
 Demo at: https://jaumard.github.io/ng2-dashboard/demo/dist/index.html
 
 ## Installation 
@@ -89,3 +96,12 @@ To do this, you can use the `widgetHandle` directive to select witch handle you 
 Hey dude! Help me out for a couple of :beers:!
 
 [![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/badge.svg?style=beer-square)](https://beerpay.io/jaumard/ng2-dashboard)  [![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/make-wish.svg?style=flat-square)](https://beerpay.io/jaumard/ng2-dashboard?focus=wish)
+
+[npm-image]: https://img.shields.io/npm/v/ng2-dashboard.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/ng2-dashboard
+[npm-download]: https://img.shields.io/npm/dt/ng2-dashboard.svg
+[daviddm-image]: http://img.shields.io/david/jaumard/trailpack-passport.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/jaumard/ng2-dashboard
+[codeclimate-image]: https://img.shields.io/codeclimate/github/jaumard/ng2-dashboard.svg?style=flat-square
+[codeclimate-url]: https://codeclimate.com/github/jaumard/ng2-dashboard
+
