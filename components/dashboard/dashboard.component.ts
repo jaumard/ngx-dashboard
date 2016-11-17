@@ -116,7 +116,14 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   public removeItem(ngItem: WidgetComponent): void {
-    this._removeElement(ngItem, this._getElementIndex(ngItem));
+    let element;
+    for (let i = 0; i < this._elements.length; i++) {
+      element = this._elements[i];
+      if (element.widgetId == element.widgetId) {
+        break;
+      }
+    }
+    this._removeElement(element, this._getElementIndex(element));
   }
 
   public removeItemByIndex(index: number): void {
@@ -130,6 +137,8 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   private _removeElement(widget: WidgetComponent, index: number): void {
+    if (index < 0 || !widget) return;
+
     this._enableAnimation();
     this._viewCntRef.remove(index);
     this._elements = this._elements.filter((item, i) => item !== widget);
