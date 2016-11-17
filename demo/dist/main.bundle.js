@@ -25301,9 +25301,9 @@ var WidgetComponent = (function () {
     };
     WidgetComponent.prototype.setEventListener = function (cbMouse) {
         var _this = this;
-        if (this.handle) {
-            this._renderer.listen(this.handle.element, 'mousedown', function (e) { return cbMouse(e, _this); });
-            this._renderer.listen(this.handle.element, 'touchstart', function (e) { return cbMouse(e, _this); });
+        if (this._handle) {
+            this._renderer.listen(this._handle.element, 'mousedown', function (e) { return cbMouse(e, _this); });
+            this._renderer.listen(this._handle.element, 'touchstart', function (e) { return cbMouse(e, _this); });
         }
         else {
             this._renderer.listen(this._ngEl.nativeElement, 'mousedown', function (e) { return cbMouse(e, _this); });
@@ -25316,12 +25316,15 @@ var WidgetComponent = (function () {
     WidgetComponent.prototype.removeClass = function (myClass) {
         this._renderer.setElementClass(this._ngEl.nativeElement, myClass, false);
     };
+    Object.defineProperty(WidgetComponent.prototype, "handle", {
+        get: function () {
+            return this._handle ? this._handle.element : this.element;
+        },
+        enumerable: true,
+        configurable: true
+    });
     WidgetComponent.prototype.removeFromParent = function () {
-        var el = this._ngEl.nativeElement;
-        el.parentNode.removeChild(el);
-    };
-    WidgetComponent.prototype.getHandle = function () {
-        return this.handle ? this.handle.element : this.element;
+        this._ngEl.nativeElement.remove();
     };
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
@@ -25333,17 +25336,17 @@ var WidgetComponent = (function () {
     ], WidgetComponent.prototype, "widgetId", void 0);
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_20" /* ContentChild */])(__WEBPACK_IMPORTED_MODULE_1__directives_widget_handle_directive__["a" /* WidgetHandleDirective */]), 
-        __metadata('design:type', Object)
-    ], WidgetComponent.prototype, "handle", void 0);
+        __metadata('design:type', (typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__directives_widget_handle_directive__["a" /* WidgetHandleDirective */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__directives_widget_handle_directive__["a" /* WidgetHandleDirective */]) === 'function' && _a) || Object)
+    ], WidgetComponent.prototype, "_handle", void 0);
     WidgetComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Component */])({
             selector: 'widget',
             template: '<ng-content></ng-content>'
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _a) || Object, (typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _b) || Object])
+        __metadata('design:paramtypes', [(typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _b) || Object, (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _c) || Object])
     ], WidgetComponent);
     return WidgetComponent;
-    var _a, _b;
+    var _a, _b, _c;
 }());
 
 
@@ -38559,28 +38562,15 @@ var DashboardComponent = (function () {
         this.onDragEnd = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]();
         this.margin = 10;
         this.widgetsSize = [150, 150];
+        this.THRESHOLD = 10;
         //	Public variables
         this.dragEnable = true;
         //	Private variables
         this._width = 0;
         this._nbColumn = 0;
+        this._previousPosition = { top: 0, left: 0 };
         this._isDragging = false;
         this._elements = [];
-        this._compare = function (widget1, widget2) {
-            if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
-                return +1;
-            }
-            if (widget2.offset.top > widget1.offset.top + widget1.height / 2) {
-                return -1;
-            }
-            if ((widget1.offset.left + (widget1.width / 2)) > (widget2.offset.left + (widget2.width / 2))) {
-                return +1;
-            }
-            if ((widget2.offset.left + (widget2.width / 2)) > (widget1.offset.left + (widget1.width / 2))) {
-                return -1;
-            }
-            return 0;
-        };
     }
     Object.defineProperty(DashboardComponent.prototype, "width", {
         get: function () {
@@ -38623,24 +38613,47 @@ var DashboardComponent = (function () {
     DashboardComponent.prototype.addItem = function (ngItem) {
         var factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
         var ref = this._viewCntRef.createComponent(factory);
-        ref.instance.setEventListener(this._onMouseDown.bind(this));
-        this._elements.push(ref.instance);
+        var newItem = ref.instance;
+        newItem.setEventListener(this._onMouseDown.bind(this));
+        this._elements.push(newItem);
         this._calculPositions();
+        return newItem;
+    };
+    DashboardComponent.prototype.clearItems = function () {
+        this._viewCntRef.clear();
+        this._elements = [];
+    };
+    DashboardComponent.prototype._getElementIndex = function (ngItem) {
+        return this._elements.indexOf(ngItem);
     };
     DashboardComponent.prototype.removeItem = function (ngItem) {
-        this._removeElement(ngItem);
+        var element;
+        for (var i = 0; i < this._elements.length; i++) {
+            element = this._elements[i];
+            if (element.widgetId == element.widgetId) {
+                break;
+            }
+        }
+        this._removeElement(element, this._getElementIndex(element));
     };
     DashboardComponent.prototype.removeItemByIndex = function (index) {
         var element = this._elements.find(function (item, i) { return i === index; });
-        this._removeElement(element);
+        this._removeElement(element, index);
     };
     DashboardComponent.prototype.removeItemById = function (id) {
         var element = this._elements.find(function (item) { return item.widgetId === id; });
-        this._removeElement(element);
+        this._removeElement(element, this._getElementIndex(element));
     };
-    DashboardComponent.prototype._removeElement = function (widget) {
+    DashboardComponent.prototype._removeElement = function (widget, index) {
+        if (index < 0 || !widget)
+            return;
         this._enableAnimation();
-        widget.removeFromParent();
+        if (this._viewCntRef.length < index) {
+            widget.removeFromParent();
+        }
+        else {
+            this._viewCntRef.remove(index);
+        }
         this._elements = this._elements.filter(function (item, i) { return item !== widget; });
         this._calculPositions();
         this._disableAnimation();
@@ -38699,7 +38712,7 @@ var DashboardComponent = (function () {
         this._calculPositions();
     };
     DashboardComponent.prototype._onMouseDown = function (e, widget) {
-        this._isDragging = this.dragEnable && e.target === widget.getHandle();
+        this._isDragging = this.dragEnable && e.target === widget.handle;
         if (this._isDragging) {
             this.onDragStart.emit(widget);
             widget.addClass('active');
@@ -38719,8 +38732,12 @@ var DashboardComponent = (function () {
             var pos = this._getMousePosition(e);
             var left = pos.left - this._offset.left;
             var top = pos.top - this._offset.top;
-            this._elements.sort(this._compare);
-            this._calculPositions();
+            if (Math.abs(pos.top - this._previousPosition.top) > this.THRESHOLD
+                || Math.abs(pos.left - this._previousPosition.left) > this.THRESHOLD) {
+                this._elements.sort(this._compare);
+                this._calculPositions();
+                this._previousPosition = pos;
+            }
             this._currentElement.setPosition(top, left);
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
@@ -38781,6 +38798,22 @@ var DashboardComponent = (function () {
             top: top
         };
     };
+    DashboardComponent.prototype._compare = function (widget1, widget2) {
+        if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
+            return +1;
+        }
+        if (widget2.offset.top > widget1.offset.top + widget1.height / 2) {
+            return -1;
+        }
+        if ((widget1.offset.left + (widget1.width / 2)) > (widget2.offset.left + (widget2.width / 2))) {
+            return +1;
+        }
+        if ((widget2.offset.left + (widget2.width / 2)) > (widget1.offset.left + (widget1.width / 2))) {
+            return -1;
+        }
+        return 0;
+    };
+    ;
     DashboardComponent.prototype._enableAnimation = function () {
         var _this = this;
         this._elements.forEach(function (item) {
@@ -38818,12 +38851,16 @@ var DashboardComponent = (function () {
         __metadata('design:type', Array)
     ], DashboardComponent.prototype, "widgetsSize", void 0);
     __decorate([
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
+        __metadata('design:type', Number)
+    ], DashboardComponent.prototype, "THRESHOLD", void 0);
+    __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_21" /* ViewChild */])('target', { read: __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */] }), 
-        __metadata('design:type', Object)
+        __metadata('design:type', (typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */]) === 'function' && _d) || Object)
     ], DashboardComponent.prototype, "_viewCntRef", void 0);
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_22" /* ContentChildren */])(__WEBPACK_IMPORTED_MODULE_1__widget_widget_component__["a" /* WidgetComponent */]), 
-        __metadata('design:type', (typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */]) === 'function' && _d) || Object)
+        __metadata('design:type', (typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */]) === 'function' && _e) || Object)
     ], DashboardComponent.prototype, "_items", void 0);
     DashboardComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Component */])({
@@ -38839,10 +38876,10 @@ var DashboardComponent = (function () {
             },
             styles: [__webpack_require__(593)]
         }), 
-        __metadata('design:paramtypes', [(typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */]) === 'function' && _e) || Object, (typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _f) || Object, (typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _g) || Object])
+        __metadata('design:paramtypes', [(typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */]) === 'function' && _f) || Object, (typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _g) || Object, (typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _h) || Object])
     ], DashboardComponent);
     return DashboardComponent;
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
 }());
 
 
@@ -38891,7 +38928,8 @@ var AppComponent = (function () {
         console.log(widget, type);
     };
     AppComponent.prototype.addWidget = function () {
-        this.dashboard.addItem(__WEBPACK_IMPORTED_MODULE_2__my_widget_my_widget_component__["a" /* MyWidgetComponent */]);
+        var ref = this.dashboard.addItem(__WEBPACK_IMPORTED_MODULE_2__my_widget_my_widget_component__["a" /* MyWidgetComponent */]);
+        ref.widgetId = Math.random() + '';
     };
     AppComponent.prototype.close = function (e, id) {
         this.dashboard.removeItemById(id);
@@ -51581,6 +51619,7 @@ function sanitizeStyle(value) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_dashboard_dashboard_component__ = __webpack_require__(290);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__widget_widget_component__ = __webpack_require__(185);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__directives_widget_handle_directive__ = __webpack_require__(293);
 /* harmony export (binding) */ __webpack_require__.d(exports, "a", function() { return Ng2DashboardModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -51594,6 +51633,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var Ng2DashboardModule = (function () {
     function Ng2DashboardModule() {
     }
@@ -51601,11 +51641,13 @@ var Ng2DashboardModule = (function () {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["H" /* NgModule */])({
             declarations: [
                 __WEBPACK_IMPORTED_MODULE_1__components_dashboard_dashboard_component__["a" /* DashboardComponent */],
-                __WEBPACK_IMPORTED_MODULE_2__widget_widget_component__["a" /* WidgetComponent */]
+                __WEBPACK_IMPORTED_MODULE_2__widget_widget_component__["a" /* WidgetComponent */],
+                __WEBPACK_IMPORTED_MODULE_3__directives_widget_handle_directive__["a" /* WidgetHandleDirective */]
             ],
             exports: [
                 __WEBPACK_IMPORTED_MODULE_1__components_dashboard_dashboard_component__["a" /* DashboardComponent */],
-                __WEBPACK_IMPORTED_MODULE_2__widget_widget_component__["a" /* WidgetComponent */]
+                __WEBPACK_IMPORTED_MODULE_2__widget_widget_component__["a" /* WidgetComponent */],
+                __WEBPACK_IMPORTED_MODULE_3__directives_widget_handle_directive__["a" /* WidgetHandleDirective */]
             ],
             providers: []
         }), 
@@ -51627,7 +51669,6 @@ var Ng2DashboardModule = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components__ = __webpack_require__(435);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_component__ = __webpack_require__(291);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__my_widget_my_widget_component__ = __webpack_require__(292);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__directives_widget_handle_directive__ = __webpack_require__(293);
 /* harmony export (binding) */ __webpack_require__.d(exports, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -51645,7 +51686,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var AppModule = (function () {
     function AppModule() {
     }
@@ -51653,8 +51693,7 @@ var AppModule = (function () {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_core__["H" /* NgModule */])({
             declarations: [
                 __WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */],
-                __WEBPACK_IMPORTED_MODULE_6__my_widget_my_widget_component__["a" /* MyWidgetComponent */],
-                __WEBPACK_IMPORTED_MODULE_7__directives_widget_handle_directive__["a" /* WidgetHandleDirective */]
+                __WEBPACK_IMPORTED_MODULE_6__my_widget_my_widget_component__["a" /* MyWidgetComponent */]
             ],
             entryComponents: [
                 __WEBPACK_IMPORTED_MODULE_6__my_widget_my_widget_component__["a" /* MyWidgetComponent */]
