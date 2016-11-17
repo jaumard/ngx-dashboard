@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
   }
 
   addWidget() {
-    const ref: MyWidgetComponent = this.dashboard.addItem<MyWidgetComponent>(MyWidgetComponent);
+    const ref: MyWidgetComponent = this.dashboard.addItem(MyWidgetComponent);
     ref.widgetId = Math.random() + '';
   }
 

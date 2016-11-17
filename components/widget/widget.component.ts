@@ -69,4 +69,8 @@ export class WidgetComponent implements OnInit {
   get handle(): any {
     return this._handle ? this._handle.element : this.element;
   }
+
+  removeFromParent() {
+    this._ngEl.nativeElement.remove();
+  }
 }

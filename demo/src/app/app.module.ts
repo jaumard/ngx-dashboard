@@ -5,13 +5,11 @@ import {HttpModule} from "@angular/http";
 import {Ng2DashboardModule} from "../../../components";
 import {AppComponent} from "./app.component";
 import {MyWidgetComponent} from "./my-widget/my-widget.component";
-import {WidgetHandleDirective} from "../../../directives/widget-handle.directive";
 
 @NgModule({
   declarations: [
     AppComponent,
-    MyWidgetComponent,
-    WidgetHandleDirective
+    MyWidgetComponent
   ],
   entryComponents: [
     MyWidgetComponent

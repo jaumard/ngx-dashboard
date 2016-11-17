@@ -96,10 +96,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this.dragEnable = false;
   }
 
-  public addItem<T extends WidgetComponent>(ngItem: Type<T>): T {
+  public addItem(ngItem: Type<WidgetComponent>): WidgetComponent {
     let factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
     const ref = this._viewCntRef.createComponent(factory);
-    const newItem: T = ref.instance as T;
+    const newItem: WidgetComponent = ref.instance;
     newItem.setEventListener(this._onMouseDown.bind(this));
     this._elements.push(newItem);
     this._calculPositions();
@@ -138,9 +138,13 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   private _removeElement(widget: WidgetComponent, index: number): void {
     if (index < 0 || !widget) return;
-
     this._enableAnimation();
-    this._viewCntRef.remove(index);
+    if (this._viewCntRef.length < index) {
+      widget.removeFromParent();
+    }
+    else {
+      this._viewCntRef.remove(index);
+    }
     this._elements = this._elements.filter((item, i) => item !== widget);
     this._calculPositions();
     this._disableAnimation();
