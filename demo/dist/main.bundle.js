@@ -38560,6 +38560,7 @@ var DashboardComponent = (function () {
         this.onDragStart = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]();
         this.onDrag = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]();
         this.onDragEnd = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]();
+        this.onOrderChange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]();
         this.margin = 10;
         this.widgetsSize = [150, 150];
         this.THRESHOLD = 10;
@@ -38570,6 +38571,7 @@ var DashboardComponent = (function () {
         this._nbColumn = 0;
         this._previousPosition = { top: 0, left: 0 };
         this._isDragging = false;
+        this._lastOrder = [];
         this._elements = [];
     }
     Object.defineProperty(DashboardComponent.prototype, "width", {
@@ -38719,6 +38721,7 @@ var DashboardComponent = (function () {
             this._currentElement = widget;
             this._offset = this._getOffsetFromTarget(e);
             this._enableAnimation();
+            this._lastOrder = this.order;
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -38726,6 +38729,13 @@ var DashboardComponent = (function () {
         }
         return true;
     };
+    Object.defineProperty(DashboardComponent.prototype, "order", {
+        get: function () {
+            return this._elements.map(function (elt) { return elt.widgetId; });
+        },
+        enumerable: true,
+        configurable: true
+    });
     DashboardComponent.prototype._onMouseMove = function (e) {
         if (this._isDragging) {
             this.onDrag.emit(this._currentElement);
@@ -38761,6 +38771,11 @@ var DashboardComponent = (function () {
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
                 e.stopPropagation();
+            }
+            var currentOrder = this.order;
+            var isOrderChanged = JSON.stringify(this._lastOrder) != JSON.stringify(currentOrder);
+            if (isOrderChanged) {
+                this.onOrderChange.emit(this.order);
             }
         }
         return true;
@@ -38843,6 +38858,10 @@ var DashboardComponent = (function () {
         __metadata('design:type', (typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]) === 'function' && _c) || Object)
     ], DashboardComponent.prototype, "onDragEnd", void 0);
     __decorate([
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Output */])(), 
+        __metadata('design:type', (typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["_6" /* EventEmitter */]) === 'function' && _d) || Object)
+    ], DashboardComponent.prototype, "onOrderChange", void 0);
+    __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Input */])(), 
         __metadata('design:type', Number)
     ], DashboardComponent.prototype, "margin", void 0);
@@ -38856,11 +38875,11 @@ var DashboardComponent = (function () {
     ], DashboardComponent.prototype, "THRESHOLD", void 0);
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_21" /* ViewChild */])('target', { read: __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */] }), 
-        __metadata('design:type', (typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */]) === 'function' && _d) || Object)
+        __metadata('design:type', (typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["h" /* ViewContainerRef */]) === 'function' && _e) || Object)
     ], DashboardComponent.prototype, "_viewCntRef", void 0);
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_22" /* ContentChildren */])(__WEBPACK_IMPORTED_MODULE_1__widget_widget_component__["a" /* WidgetComponent */]), 
-        __metadata('design:type', (typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */]) === 'function' && _e) || Object)
+        __metadata('design:type', (typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* QueryList */]) === 'function' && _f) || Object)
     ], DashboardComponent.prototype, "_items", void 0);
     DashboardComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Component */])({
@@ -38876,10 +38895,10 @@ var DashboardComponent = (function () {
             },
             styles: [__webpack_require__(593)]
         }), 
-        __metadata('design:paramtypes', [(typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */]) === 'function' && _f) || Object, (typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _g) || Object, (typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _h) || Object])
+        __metadata('design:paramtypes', [(typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* ComponentFactoryResolver */]) === 'function' && _g) || Object, (typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["g" /* ElementRef */]) === 'function' && _h) || Object, (typeof (_j = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["q" /* Renderer */]) === 'function' && _j) || Object])
     ], DashboardComponent);
     return DashboardComponent;
-    var _a, _b, _c, _d, _e, _f, _g, _h;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
 }());
 
 
@@ -38926,6 +38945,9 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.log = function (widget, type) {
         console.log(widget, type);
+    };
+    AppComponent.prototype.logOrder = function (order) {
+        console.log(order, 'orderchange');
     };
     AppComponent.prototype.addWidget = function () {
         var ref = this.dashboard.addItem(__WEBPACK_IMPORTED_MODULE_2__my_widget_my_widget_component__["a" /* MyWidgetComponent */]);
@@ -54816,7 +54838,7 @@ module.exports = ""
 /* 596 */
 /***/ function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\"\n           [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div widgetHandle class=\"head handle\">Large widget [2, 1] handle only on text</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div widgetHandle class=\"head handle\">Tall widget [1, 2] handle only on text</div>\n  </widget>\n  <widget widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\" class=\"handle\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <!--app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </widget>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </widget-->\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onOrderChange)=\"logOrder($event)\" (onDragStart)=\"log($event, 'ondragstart')\" (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\"\n           [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div widgetHandle class=\"head handle\">Large widget [2, 1] handle only on text</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div widgetHandle class=\"head handle\">Tall widget [1, 2] handle only on text</div>\n  </widget>\n  <widget widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\" class=\"handle\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <!--app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </widget>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </widget-->\n</dashboard>\n"
 
 /***/ },
 /* 597 */
