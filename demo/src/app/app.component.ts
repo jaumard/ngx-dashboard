@@ -41,6 +41,10 @@ export class AppComponent implements OnInit {
     console.log(widget, type);
   }
 
+  logOrder(order: Array<string>) {
+    console.log(order, 'orderchange');
+  }
+
   addWidget() {
     const ref: MyWidgetComponent = this.dashboard.addItem(MyWidgetComponent);
     ref.widgetId = Math.random() + '';

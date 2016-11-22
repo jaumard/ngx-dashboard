@@ -35,6 +35,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   @Output() public onDragStart: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
   @Output() public onDrag: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
   @Output() public onDragEnd: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
+  @Output() public onOrderChange: EventEmitter<Array<string>> = new EventEmitter<Array<string>>();
 
   @Input() margin: number = 10;
   @Input() widgetsSize: number[] = [150, 150];
@@ -49,6 +50,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _nbColumn: number = 0;
   private _previousPosition: any = {top: 0, left: 0};
   private _isDragging: boolean = false;
+  private _lastOrder: Array<string> = [];
   private _currentElement: WidgetComponent;
   private _elements: WidgetComponent[] = [];
   private _offset: any;
@@ -220,6 +222,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       this._currentElement = widget;
       this._offset = this._getOffsetFromTarget(e);
       this._enableAnimation();
+      this._lastOrder = this.order;
 
       if (this._isTouchEvent(e)) {
         e.preventDefault();
@@ -227,6 +230,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       }
     }
     return true;
+  }
+
+  public get order(): Array<string> {
+    return this._elements.map(elt => elt.widgetId);
   }
 
   private _onMouseMove(e: any): boolean {
@@ -240,6 +247,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       if (Math.abs(pos.top - this._previousPosition.top) > this.THRESHOLD
         || Math.abs(pos.left - this._previousPosition.left) > this.THRESHOLD) {
         this._elements.sort(this._compare);
+
         this._calculPositions();
         this._previousPosition = pos;
       }
@@ -267,6 +275,13 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       if (this._isTouchEvent(e)) {
         e.preventDefault();
         e.stopPropagation();
+      }
+      const currentOrder = this.order;
+
+      const isOrderChanged = JSON.stringify(this._lastOrder) != JSON.stringify(currentOrder);
+
+      if (isOrderChanged) {
+        this.onOrderChange.emit(this.order);
       }
     }
     return true;

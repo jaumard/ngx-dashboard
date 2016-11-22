@@ -3,7 +3,8 @@
 </h1>
 <button (click)="addWidget()">Add widget</button>
 <br><br>
-<dashboard (onDragStart)="log($event, 'ondragstart')" (onDragEnd)="log($event, 'ondragend')"
+<dashboard (onOrderChange)="logOrder($event)" (onDragStart)="log($event, 'ondragstart')"
+           (onDragEnd)="log($event, 'ondragend')"
            (onDrag)="log($event, 'ondragmove')" class="dashboard" [widgetsSize]="widgetsSize"
            [margin]="dashboardMargin">
 
