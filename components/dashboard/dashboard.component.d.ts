@@ -31,6 +31,8 @@ export declare class DashboardComponent {
 
   disableDrag(): void;
 
+  getWidgetById(widgetId: string): WidgetComponent;
+
   removeItem(ngItem: WidgetComponent): void;
 
   removeItemByIndex(index: Number): void;

@@ -92,10 +92,12 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   public enableDrag(): void {
     this.dragEnable = true;
+    this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
   }
 
   public disableDrag(): void {
     this.dragEnable = false;
+    this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
   }
 
   public addItem(ngItem: Type<WidgetComponent>): WidgetComponent {
@@ -117,11 +119,22 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     return this._elements.indexOf(ngItem);
   }
 
+  public getWidgetById(widgetId: string): WidgetComponent {
+    let element;
+    for (let i = 0; i < this._elements.length; i++) {
+      element = this._elements[i];
+      if (widgetId == element.widgetId) {
+        break;
+      }
+    }
+    return element;
+  }
+
   public removeItem(ngItem: WidgetComponent): void {
     let element;
     for (let i = 0; i < this._elements.length; i++) {
       element = this._elements[i];
-      if (element.widgetId == element.widgetId) {
+      if (element.widgetId == ngItem.widgetId) {
         break;
       }
     }
