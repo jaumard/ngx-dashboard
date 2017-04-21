@@ -100,10 +100,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
   }
 
-  public addItem(ngItem: Type<WidgetComponent>): WidgetComponent {
+  public addItem<T extends WidgetComponent>(ngItem: Type<T>): T {
     let factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
     const ref = this._viewCntRef.createComponent(factory);
-    const newItem: WidgetComponent = ref.instance;
+    const newItem: T = ref.instance;
     newItem.setEventListener(this._onMouseDown.bind(this));
     this._elements.push(newItem);
     this._calculPositions();
