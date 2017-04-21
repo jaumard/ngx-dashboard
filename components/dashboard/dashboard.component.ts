@@ -17,8 +17,6 @@ import {
 } from "@angular/core";
 import {WidgetComponent} from "../widget/widget.component";
 
-const css = require('./dashboard.component.css');
-
 @Component({
   selector: 'dashboard',
   template: '<div #target><ng-content></ng-content></div>',
@@ -30,7 +28,7 @@ const css = require('./dashboard.component.css');
     '(document:touchend)': '_onMouseUp($event)',
     '(document:touchcancel)': '_onMouseUp($event)'
   },
-  styles: [css]
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements AfterViewInit, OnChanges {
 //	Event Emitters

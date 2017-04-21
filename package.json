@@ -25,8 +25,8 @@
   },
   "homepage": "https://github.com/jaumard/ng2-dashboard#readme",
   "dependencies": {
-    "@angular/core": "^2.4.5",
-    "rxjs": "^5.0.3",
-    "zone.js": "^0.7.6"
+    "@angular/core": "^4.0.2",
+    "rxjs": "^5.1.0",
+    "zone.js": "^0.8.4"
   }
 }
