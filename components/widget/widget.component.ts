@@ -49,12 +49,12 @@ export class WidgetComponent implements OnInit {
 
   public setEventListener(cbMouse: Function): void {
     if (this._handle) {
-      this._renderer.listen(this._handle.element, 'mousedown', (e) => cbMouse(e, this));
-      this._renderer.listen(this._handle.element, 'touchstart', (e) => cbMouse(e, this));
+      this._renderer.listen(this._handle.element, 'mousedown', (e: any) => cbMouse(e, this));
+      this._renderer.listen(this._handle.element, 'touchstart', (e: any) => cbMouse(e, this));
     }
     else {
-      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cbMouse(e, this));
-      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cbMouse(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e: any) => cbMouse(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e: any) => cbMouse(e, this));
     }
   }
 

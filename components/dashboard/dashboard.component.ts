@@ -173,7 +173,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._positionWidget(lines, this._elements, 0, 0, 0)
   }
 
-  private _positionWidget(lines, items, index, column, row): void {
+  private _positionWidget(lines: number[], items: WidgetComponent[], index: number, column: number, row: number): void {
     if (!items[index]) {
       const height = (row + 1) * this.widgetsSize[1] + row * this.margin;
       this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
@@ -339,7 +339,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private _compare(widget1, widget2): number {
+  private _compare(widget1: WidgetComponent, widget2: WidgetComponent): number {
     if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
       return +1;
     }

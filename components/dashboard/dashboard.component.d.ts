@@ -45,7 +45,7 @@ export declare class DashboardComponent {
 
   private _calculPositions(): void;
 
-  private _positionWidget(lines, items, index, column, row): void;
+  private _positionWidget(lines: number[], items: WidgetComponent[], index: number, column: number, row: number): void;
 
   private _calculSizeAndColumn(): void;
 
@@ -65,7 +65,7 @@ export declare class DashboardComponent {
 
   private _getMousePosition(e: any): any;
 
-  private _compare(widget1, widget2): number;
+  private _compare(widget1: WidgetComponent, widget2: WidgetComponent): number;
 
   private _enableAnimation(): void;
 
