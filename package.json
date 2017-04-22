@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "rxjs": "^5.1.0",
-    "zone.js": "^0.8.4"
+    "zone.js": "0.8.5"
   },
   "devDependencies": {
     "@angular/core": "^4.0.3",

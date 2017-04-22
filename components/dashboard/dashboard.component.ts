@@ -5,7 +5,7 @@ import {
   Input,
   Output,
   AfterViewInit,
-  Renderer,
+  Renderer2,
   ElementRef,
   QueryList,
   ViewContainerRef,
@@ -59,7 +59,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   constructor(private _componentFactoryResolver: ComponentFactoryResolver,
               private _ngEl: ElementRef,
-              private _renderer: Renderer) {
+              private _renderer: Renderer2) {
 
   }
 
@@ -92,12 +92,12 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   public enableDrag(): void {
     this.dragEnable = true;
-    this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
+    this._renderer.removeClass(this._ngEl.nativeElement, 'disabled');
   }
 
   public disableDrag(): void {
     this.dragEnable = false;
-    this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
+    this._renderer.addClass(this._ngEl.nativeElement, 'disabled');
   }
 
   public addItem<T extends WidgetComponent>(ngItem: Type<T>): T {
@@ -176,7 +176,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _positionWidget(lines: number[], items: WidgetComponent[], index: number, column: number, row: number): void {
     if (!items[index]) {
       const height = (row + 1) * this.widgetsSize[1] + row * this.margin;
-      this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
+      this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
       return;
     }
 

@@ -1,4 +1,4 @@
-import {Component, Renderer, ElementRef, forwardRef, Input, ViewChild} from "@angular/core";
+import {Component, Renderer2, ElementRef, forwardRef, Input, ViewChild} from "@angular/core";
 import {WidgetComponent} from "../../../../components/widget/widget.component";
 import {WidgetHandleDirective} from "../../../../directives/widget-handle.directive";
 
@@ -15,7 +15,7 @@ export class MyWidgetComponent extends WidgetComponent {
   @Input() public widgetId: string;
   @ViewChild(WidgetHandleDirective) protected _handle: WidgetHandleDirective;
 
-  constructor(ngEl: ElementRef, renderer: Renderer) {
+  constructor(ngEl: ElementRef, renderer: Renderer2) {
     super(ngEl, renderer);
   }
 }

@@ -21,7 +21,7 @@
     "@angular/platform-browser-dynamic": "^4.0.3",
     "@angular/router": "^4.0.3",
     "rxjs": "^5.3.0",
-    "zone.js": "^0.8.5"
+    "zone.js": "0.8.5"
   },
   "devDependencies": {
     "@angular/compiler-cli": "^4.0.3",

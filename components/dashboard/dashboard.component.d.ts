@@ -17,10 +17,6 @@ export declare class DashboardComponent {
   private _items: QueryList<WidgetComponent>;
   private _viewCntRef: ViewContainerRef;
 
-  get width(): number;
-
-  get height(): number;
-
   addItem<T extends WidgetComponent>(ngItem: Type<T>): T;
 
   ngOnChanges(changes: SimpleChanges): void;
