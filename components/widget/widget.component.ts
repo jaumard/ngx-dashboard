@@ -1,4 +1,4 @@
-import {Component, OnInit, Renderer, Input, ElementRef, ViewChild} from "@angular/core";
+import {Component, OnInit, Renderer, Input, ElementRef, ContentChild} from "@angular/core";
 import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
 
 @Component({
@@ -8,7 +8,7 @@ import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
 export class WidgetComponent implements OnInit {
   @Input() public size: number[] = [1, 1];
   @Input() public widgetId: string;
-  @ViewChild(WidgetHandleDirective) protected _handle: WidgetHandleDirective;
+  @ContentChild(WidgetHandleDirective) protected _handle: WidgetHandleDirective;
 
   constructor(protected _ngEl: ElementRef,
               protected _renderer: Renderer) {
