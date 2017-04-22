@@ -13,7 +13,7 @@ import {MyWidgetComponent} from "./my-widget/my-widget.component";
 })
 export class AppComponent implements OnInit {
   title = 'app works!';
-  @ViewChild(DashboardComponent) dashboard;
+  @ViewChild(DashboardComponent) dashboard: DashboardComponent;
   widgetsSize: number[] = [300, 150];
   dashboardMargin: number = 20;
 

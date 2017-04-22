@@ -17,8 +17,6 @@ import {
 } from "@angular/core";
 import {WidgetComponent} from "../widget/widget.component";
 
-const css = require('./dashboard.component.css');
-
 @Component({
   selector: 'dashboard',
   template: '<div #target><ng-content></ng-content></div>',
@@ -30,7 +28,7 @@ const css = require('./dashboard.component.css');
     '(document:touchend)': '_onMouseUp($event)',
     '(document:touchcancel)': '_onMouseUp($event)'
   },
-  styles: [css]
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements AfterViewInit, OnChanges {
 //	Event Emitters
@@ -102,10 +100,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
   }
 
-  public addItem(ngItem: Type<WidgetComponent>): WidgetComponent {
+  public addItem<T extends WidgetComponent>(ngItem: Type<T>): T {
     let factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
     const ref = this._viewCntRef.createComponent(factory);
-    const newItem: WidgetComponent = ref.instance;
+    const newItem: T = ref.instance;
     newItem.setEventListener(this._onMouseDown.bind(this));
     this._elements.push(newItem);
     this._calculPositions();
@@ -175,7 +173,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._positionWidget(lines, this._elements, 0, 0, 0)
   }
 
-  private _positionWidget(lines, items, index, column, row): void {
+  private _positionWidget(lines: number[], items: WidgetComponent[], index: number, column: number, row: number): void {
     if (!items[index]) {
       const height = (row + 1) * this.widgetsSize[1] + row * this.margin;
       this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
@@ -341,7 +339,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private _compare(widget1, widget2): number {
+  private _compare(widget1: WidgetComponent, widget2: WidgetComponent): number {
     if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
       return +1;
     }
