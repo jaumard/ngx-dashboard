@@ -116,3 +116,8 @@ Hey dude! Help me out for a couple of :beers:!
 [codeclimate-image]: https://img.shields.io/codeclimate/github/jaumard/ngx-dashboard.svg?style=flat-square
 [codeclimate-url]: https://codeclimate.com/github/jaumard/ngx-dashboard
 
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/badge.svg?style=beer-square)](https://beerpay.io/jaumard/ngx-dashboard)  [![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/make-wish.svg?style=flat-square)](https://beerpay.io/jaumard/ngx-dashboard?focus=wish)
