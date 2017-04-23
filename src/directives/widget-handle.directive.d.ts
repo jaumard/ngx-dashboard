@@ -1,3 +1,3 @@
 export declare class WidgetHandleDirective {
-  get element(): any;
+  element(): any;
 }

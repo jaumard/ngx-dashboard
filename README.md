@@ -1,33 +1,33 @@
-# ng2-dashboard
-Dashboard library for angular 2
+# ngx-dashboard
+Dashboard library for angular 2, 4 and more
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][npm-download]][npm-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
-[![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/badge.svg?style=flat)](https://beerpay.io/jaumard/ng2-dashboard)
-[![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/make-wish.svg?style=flat)](https://beerpay.io/jaumard/ng2-dashboard)
+[![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/badge.svg?style=flat)](https://beerpay.io/jaumard/ngx-dashboard)
+[![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/make-wish.svg?style=flat)](https://beerpay.io/jaumard/ngx-dashboard)
 
-Demo at: https://jaumard.github.io/ng2-dashboard/demo/dist/index.html
+Demo at: https://jaumard.github.io/ngx-dashboard/demo/dist/index.html
 
 ## Installation 
 
 ```js
-npm i ng2-dashboard
+npm i ngx-dashboard
 // or with yarn 
-yarn add ng2-dashboard
+yarn add ngx-dashboard
 ```
 
 ## Usage 
 
-See demo source code here: https://github.com/jaumard/ng2-dashboard/tree/master/demo
+See demo source code here: https://github.com/jaumard/ngx-dashboard/tree/master/demo
 
 ### Create my own widget
 To do this you need to extend the WidgetComponent like this: 
 
 ```js
 import {Component, Renderer, ElementRef, forwardRef} from "@angular/core";
-import {WidgetComponent} from "ng2-dashboard";
+import {WidgetComponent} from "ngx-dashboard";
 
 @Component({
   selector: 'app-my-widget',
@@ -54,7 +54,7 @@ To dynamically add your widget you also need to declare it under "entryComponent
 ```js
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {Ng2DashboardModule} from 'ng2-dashboard';
+import {Ng2DashboardModule} from 'ngx-dashboard';
 
 import { AppComponent } from './app.component';
 import {MyWidgetComponent} from './my-widget/my-widget.component';
@@ -89,19 +89,30 @@ To do this, you can use the `widgetHandle` directive to select witch handle you 
 </widget>
 ```
 
+# Development
+To run the demo locally, you need to do: 
+
+```
+npm run ngm
+cd demo/src
+ln -s ../../src/dist .
+cd ../
+npm start
+```
+
 ## License
 [MIT](https://github.com/jaumard/trailpack-passport/blob/master/LICENSE)
 
 ## Support on Beerpay
 Hey dude! Help me out for a couple of :beers:!
 
-[![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/badge.svg?style=beer-square)](https://beerpay.io/jaumard/ng2-dashboard)  [![Beerpay](https://beerpay.io/jaumard/ng2-dashboard/make-wish.svg?style=flat-square)](https://beerpay.io/jaumard/ng2-dashboard?focus=wish)
+[![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/badge.svg?style=beer-square)](https://beerpay.io/jaumard/ngx-dashboard)  [![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/make-wish.svg?style=flat-square)](https://beerpay.io/jaumard/ngx-dashboard?focus=wish)
 
-[npm-image]: https://img.shields.io/npm/v/ng2-dashboard.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/ng2-dashboard
-[npm-download]: https://img.shields.io/npm/dt/ng2-dashboard.svg
-[daviddm-image]: https://david-dm.org/jaumard/ng2-dashboard/status.svg
-[daviddm-url]: https://david-dm.org/jaumard/ng2-dashboard
-[codeclimate-image]: https://img.shields.io/codeclimate/github/jaumard/ng2-dashboard.svg?style=flat-square
-[codeclimate-url]: https://codeclimate.com/github/jaumard/ng2-dashboard
+[npm-image]: https://img.shields.io/npm/v/ngx-dashboard.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/ngx-dashboard
+[npm-download]: https://img.shields.io/npm/dt/ngx-dashboard.svg
+[daviddm-image]: https://david-dm.org/jaumard/ngx-dashboard/status.svg
+[daviddm-url]: https://david-dm.org/jaumard/ngx-dashboard
+[codeclimate-image]: https://img.shields.io/codeclimate/github/jaumard/ngx-dashboard.svg?style=flat-square
+[codeclimate-url]: https://codeclimate.com/github/jaumard/ngx-dashboard
 

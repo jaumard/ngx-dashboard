@@ -1,4 +1,4 @@
-import {Component, OnInit, Renderer, Input, ElementRef, ContentChild} from "@angular/core";
+import {Component, OnInit, Input, ElementRef, ContentChild, Renderer2} from "@angular/core";
 import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
 
 @Component({
@@ -11,11 +11,11 @@ export class WidgetComponent implements OnInit {
   @ContentChild(WidgetHandleDirective) protected _handle: WidgetHandleDirective;
 
   constructor(protected _ngEl: ElementRef,
-              protected _renderer: Renderer) {
+              protected _renderer: Renderer2) {
   }
 
   ngOnInit(): void {
-    this._renderer.setElementClass(this._ngEl.nativeElement, 'widget', true);
+    this._renderer.addClass(this._ngEl.nativeElement, 'widget');
   }
 
   public get element(): any {
@@ -35,35 +35,35 @@ export class WidgetComponent implements OnInit {
   }
 
   public set height(height) {
-    this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
+    this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
   }
 
   public set width(width) {
-    this._renderer.setElementStyle(this._ngEl.nativeElement, 'width', width + 'px');
+    this._renderer.setStyle(this._ngEl.nativeElement, 'width', width + 'px');
   }
 
   public setPosition(top: number, left: number): void {
-    this._renderer.setElementStyle(this._ngEl.nativeElement, 'top', top + 'px');
-    this._renderer.setElementStyle(this._ngEl.nativeElement, 'left', left + 'px');
+    this._renderer.setStyle(this._ngEl.nativeElement, 'top', top + 'px');
+    this._renderer.setStyle(this._ngEl.nativeElement, 'left', left + 'px');
   }
 
   public setEventListener(cbMouse: Function): void {
     if (this._handle) {
-      this._renderer.listen(this._handle.element, 'mousedown', (e) => cbMouse(e, this));
-      this._renderer.listen(this._handle.element, 'touchstart', (e) => cbMouse(e, this));
+      this._renderer.listen(this._handle.element, 'mousedown', (e: any) => cbMouse(e, this));
+      this._renderer.listen(this._handle.element, 'touchstart', (e: any) => cbMouse(e, this));
     }
     else {
-      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e) => cbMouse(e, this));
-      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e) => cbMouse(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'mousedown', (e: any) => cbMouse(e, this));
+      this._renderer.listen(this._ngEl.nativeElement, 'touchstart', (e: any) => cbMouse(e, this));
     }
   }
 
   addClass(myClass: string): void {
-    this._renderer.setElementClass(this._ngEl.nativeElement, myClass, true);
+    this._renderer.addClass(this._ngEl.nativeElement, myClass);
   }
 
   removeClass(myClass: string): void {
-    this._renderer.setElementClass(this._ngEl.nativeElement, myClass, false);
+    this._renderer.removeClass(this._ngEl.nativeElement, myClass);
   }
 
   get handle(): any {

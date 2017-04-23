@@ -1,5 +1,5 @@
-import {ElementRef, Renderer} from "@angular/core";
-import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
+import {ElementRef, Renderer2} from "@angular/core";
+import {WidgetHandleDirective} from "../../src/directives/widget-handle.directive";
 export declare class WidgetComponent {
   size: number;
   widgetId: string;
@@ -7,21 +7,7 @@ export declare class WidgetComponent {
   protected _handle: WidgetHandleDirective;
 
   protected _ngEl: ElementRef;
-  protected _renderer: Renderer;
-
-  get width(): number;
-
-  get height(): number;
-
-  get element(): any;
-
-  get offset(): any;
-
-  get handle(): any;
-
-  set height(height);
-
-  set width(width);
+  protected _renderer: Renderer2;
 
   ngOnInit(): void;
 

@@ -5,7 +5,7 @@ import {
   Input,
   Output,
   AfterViewInit,
-  Renderer,
+  Renderer2,
   ElementRef,
   QueryList,
   ViewContainerRef,
@@ -28,7 +28,7 @@ import {WidgetComponent} from "../widget/widget.component";
     '(document:touchend)': '_onMouseUp($event)',
     '(document:touchcancel)': '_onMouseUp($event)'
   },
-  styles: [require('./dashboard.component.css')]
+  styleUrls: ['dashboard.component.css']
 })
 export class DashboardComponent implements AfterViewInit, OnChanges {
 //	Event Emitters
@@ -59,7 +59,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   constructor(private _componentFactoryResolver: ComponentFactoryResolver,
               private _ngEl: ElementRef,
-              private _renderer: Renderer) {
+              private _renderer: Renderer2) {
 
   }
 
@@ -92,18 +92,18 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   public enableDrag(): void {
     this.dragEnable = true;
-    this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
+    this._renderer.removeClass(this._ngEl.nativeElement, 'disabled');
   }
 
   public disableDrag(): void {
     this.dragEnable = false;
-    this._renderer.setElementClass(this._ngEl.nativeElement, 'disabled', !this.dragEnable);
+    this._renderer.addClass(this._ngEl.nativeElement, 'disabled');
   }
 
-  public addItem(ngItem: Type<WidgetComponent>): WidgetComponent {
+  public addItem<T extends WidgetComponent>(ngItem: Type<T>): T {
     let factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
     const ref = this._viewCntRef.createComponent(factory);
-    const newItem: WidgetComponent = ref.instance;
+    const newItem: T = ref.instance;
     newItem.setEventListener(this._onMouseDown.bind(this));
     this._elements.push(newItem);
     this._calculPositions();
@@ -142,13 +142,32 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   public removeItemByIndex(index: number): void {
-    const element = this._elements.find((item, i) => i === index);
-    this._removeElement(element, index);
+    let element;
+    for (let i = 0; i < this._elements.length; i++) {
+      const widget = this._elements[i];
+      if (i === index) {
+        element = widget;
+        break;
+      }
+    }
+    if (element) {
+      this._removeElement(element, index);
+    }
   }
 
   public removeItemById(id: string): void {
-    const element = this._elements.find(item => item.widgetId === id);
-    this._removeElement(element, this._getElementIndex(element));
+    let element;
+    for (let i = 0; i < this._elements.length; i++) {
+      const widget = this._elements[i];
+      if (widget.widgetId == id) {
+        element = widget;
+        break;
+      }
+    }
+    if (element) {
+      this._removeElement(element, this._getElementIndex(element));
+    }
+
   }
 
   private _removeElement(widget: WidgetComponent, index: number): void {
@@ -173,10 +192,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._positionWidget(lines, this._elements, 0, 0, 0)
   }
 
-  private _positionWidget(lines, items, index, column, row): void {
+  private _positionWidget(lines: number[], items: WidgetComponent[], index: number, column: number, row: number): void {
     if (!items[index]) {
       const height = (row + 1) * this.widgetsSize[1] + row * this.margin;
-      this._renderer.setElementStyle(this._ngEl.nativeElement, 'height', height + 'px');
+      this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
       return;
     }
 
@@ -339,7 +358,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private _compare(widget1, widget2): number {
+  private _compare(widget1: WidgetComponent, widget2: WidgetComponent): number {
     if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
       return +1;
     }

@@ -4,6 +4,9 @@
 logs
 *.log
 npm-debug.log*
+/**/dist
+/**/compiled
+*.metadata.json
 
 # Runtime data
 pids
