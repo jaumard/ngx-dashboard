@@ -8,7 +8,7 @@ Dashboard library for angular 2, 4 and more
 [![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/badge.svg?style=flat)](https://beerpay.io/jaumard/ngx-dashboard)
 [![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/make-wish.svg?style=flat)](https://beerpay.io/jaumard/ngx-dashboard)
 
-Demo at: https://jaumard.github.io/ngx-dashboard/demo/dist/index.html
+Demo at: https://jaumard.github.io/ngx-dashboard/demo/demoDist/index.html
 
 ## Installation 
 

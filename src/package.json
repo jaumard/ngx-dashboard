@@ -1,6 +1,5 @@
 {
   "name": "ngx-dashboard",
-  "version": "1.0.3",
   "peerDependencies": {
     "@angular/core": "^2.3.1 || >=4.0.0"
   }
