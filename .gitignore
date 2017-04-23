@@ -4,8 +4,8 @@
 logs
 *.log
 npm-debug.log*
-
-/compiled
+/**/dist
+/**/compiled
 *.metadata.json
 
 # Runtime data

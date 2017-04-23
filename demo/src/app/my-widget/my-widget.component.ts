@@ -1,6 +1,5 @@
 import {Component, Renderer2, ElementRef, forwardRef, Input, ViewChild} from "@angular/core";
-import {WidgetComponent} from "../../../../components/widget/widget.component";
-import {WidgetHandleDirective} from "../../../../directives/widget-handle.directive";
+import {WidgetHandleDirective, WidgetComponent} from "../../dist";
 
 const forwardReference = forwardRef(() => MyWidgetComponent);
 

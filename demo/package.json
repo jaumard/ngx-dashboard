@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ng serve",
     "lint": "tslint \"src/**/*.ts\"",
-    "build": "ng build prod --base-href=/ng2-dashboard/demo/dist/",
+    "build": "ng build prod --base-href=/ngx-dashboard/demo/demoDist/",
     "test": "ng test",
     "e2e": "protractor"
   },

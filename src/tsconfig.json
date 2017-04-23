@@ -15,7 +15,7 @@
     "components/widget/widget.component.ts",
     "components/dashboard/dashboard.component.ts",
     "index.ts",
-    "node_modules/typescript/lib/lib.es6.d.ts",
+    "../node_modules/typescript/lib/lib.es6.d.ts",
     "directives/widget-handle.directive.ts"
   ],
   "angularCompilerOptions": {

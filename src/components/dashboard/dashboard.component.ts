@@ -28,7 +28,7 @@ import {WidgetComponent} from "../widget/widget.component";
     '(document:touchend)': '_onMouseUp($event)',
     '(document:touchcancel)': '_onMouseUp($event)'
   },
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['dashboard.component.css']
 })
 export class DashboardComponent implements AfterViewInit, OnChanges {
 //	Event Emitters
@@ -142,13 +142,32 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   public removeItemByIndex(index: number): void {
-    const element = this._elements.find((item, i) => i === index);
-    this._removeElement(element, index);
+    let element;
+    for (let i = 0; i < this._elements.length; i++) {
+      const widget = this._elements[i];
+      if (i === index) {
+        element = widget;
+        break;
+      }
+    }
+    if (element) {
+      this._removeElement(element, index);
+    }
   }
 
   public removeItemById(id: string): void {
-    const element = this._elements.find(item => item.widgetId === id);
-    this._removeElement(element, this._getElementIndex(element));
+    let element;
+    for (let i = 0; i < this._elements.length; i++) {
+      const widget = this._elements[i];
+      if (widget.widgetId == id) {
+        element = widget;
+        break;
+      }
+    }
+    if (element) {
+      this._removeElement(element, this._getElementIndex(element));
+    }
+
   }
 
   private _removeElement(widget: WidgetComponent, index: number): void {

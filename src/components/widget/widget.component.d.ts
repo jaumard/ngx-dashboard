@@ -1,5 +1,5 @@
 import {ElementRef, Renderer2} from "@angular/core";
-import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
+import {WidgetHandleDirective} from "../../src/directives/widget-handle.directive";
 export declare class WidgetComponent {
   size: number;
   widgetId: string;

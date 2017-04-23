@@ -1,6 +1,5 @@
 import {Component, ViewChild, OnInit} from "@angular/core";
-import {DashboardComponent} from "../../../components/dashboard/dashboard.component";
-import {WidgetComponent} from "../../../components/widget/widget.component";
+import {WidgetComponent, DashboardComponent} from "../dist";
 import {MyWidgetComponent} from "./my-widget/my-widget.component";
 
 @Component({
