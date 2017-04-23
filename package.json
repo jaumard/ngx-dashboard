@@ -1,6 +1,6 @@
 {
   "name": "ngx-dashboard-base",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Dashboard library for Angular 2, 4 and more",
   "main": "bundles/ngx-dashboard.umd.js",
   "module": "index.js",
