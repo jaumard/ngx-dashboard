@@ -28,7 +28,37 @@ import {WidgetComponent} from "../widget/widget.component";
     '(document:touchend)': '_onMouseUp($event)',
     '(document:touchcancel)': '_onMouseUp($event)'
   },
-  styleUrls: ['dashboard.component.css']
+  styles: [`
+    :host {
+      position: relative;
+      display: block;
+    }
+    
+    :host /deep/ .widget {
+      position: absolute;
+      top: 0;
+      left: 0;
+      -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Chrome/Safari/Opera */
+      -khtml-user-select: none; /* Konqueror */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+      user-select: none;
+      /* Non-prefixed version, currently
+                             not supported by any browser */
+    }
+    
+    :host /deep/ .widget.animate {
+      -webkit-transition: all 300ms ease-out;
+      -moz-transition: all 300ms ease-out;
+      -o-transition: all 300ms ease-out;
+      transition: all 300ms ease-out;
+    }
+    
+    :host /deep/ .widget.active {
+      z-index: 100000;
+    }`
+  ]
 })
 export class DashboardComponent implements AfterViewInit, OnChanges {
 //	Event Emitters

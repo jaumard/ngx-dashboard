@@ -351,7 +351,8 @@ webpackJsonp([0, 3], {
           '(document:touchend)': '_onMouseUp($event)',
           '(document:touchcancel)': '_onMouseUp($event)'
         },
-        styleUrls: ['dashboard.component.css']
+        styles: ["\n    :host {\n      position: relative;\n      display: block;\n    }\n    \n    :host /deep/ .widget {\n      position: absolute;\n      top: 0;\n      left: 0;\n      -webkit-touch-callout: none; /* iOS Safari */\n      -webkit-user-select: none; /* Chrome/Safari/Opera */\n      -khtml-user-select: none; /* Konqueror */\n      -moz-user-select: none; /* Firefox */\n      -ms-user-select: none; /* Internet Explorer/Edge */\n      user-select: none;\n      /* Non-prefixed version, currently\n                             not supported by any browser */\n    }\n    \n    :host /deep/ .widget.animate {\n      -webkit-transition: all 300ms ease-out;\n      -moz-transition: all 300ms ease-out;\n      -o-transition: all 300ms ease-out;\n      transition: all 300ms ease-out;\n    }\n    \n    :host /deep/ .widget.active {\n      z-index: 100000;\n    }"
+        ]
       },]
       },
     ];

@@ -8258,7 +8258,6 @@ webpackJsonp([2, 3], [
           });
         }
       }
-
 // Need to keep the nodes in a global Map so that multiple angular apps are supported.
       var _nativeNodeToDebugNode = new Map();
 
@@ -12714,7 +12713,6 @@ webpackJsonp([2, 3], [
         }
         return injectable;
       }
-
 // This default value is when checking the hierarchy for a token.
 //
 // It means both:
@@ -19235,7 +19233,6 @@ webpackJsonp([2, 3], [
       }
       return baseElement.getAttribute('href');
     }
-
 // based on urlUtils.js in AngularJS 1
     var urlParsingNode;
 
@@ -21143,7 +21140,6 @@ webpackJsonp([2, 3], [
       }
       return res;
     }
-
 // Good source of info about elements and attributes
 // http://dev.w3.org/html5/spec/Overview.html#semantics
 // http://simon.html5.org/html-elements
@@ -21294,7 +21290,6 @@ webpackJsonp([2, 3], [
       }
       return nextNode;
     }
-
 // Regular Expressions for parsing tags and attributes
     var SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 // ! to ~ is the ASCII range.
@@ -22637,7 +22632,6 @@ webpackJsonp([2, 3], [
         return errs.concat((err instanceof UnsubscriptionError_1.UnsubscriptionError) ? err.errors : err);
       }, []);
     }
-
 //# sourceMappingURL=Subscription.js.map
 
     /***/
@@ -29983,7 +29977,6 @@ webpackJsonp([2, 3], [
     function mergeNsAndName(prefix, localName) {
       return prefix ? ":" + prefix + ":" + localName : localName;
     }
-
 // see http://www.w3.org/TR/html51/syntax.html#named-character-references
 // see https://html.spec.whatwg.org/multipage/entities.json
 // This list is not exhaustive to keep the compiler footprint low.
@@ -50067,7 +50060,6 @@ webpackJsonp([2, 3], [
         SECURITY_SCHEMA[spec.toLowerCase()] = ctx;
       }
     }
-
 // Case is insignificant below, all element and attribute names are lower-cased for lookup.
     registerContext(__WEBPACK_IMPORTED_MODULE_0__angular_core__["SecurityContext"].HTML, [
       'iframe|srcdoc',
@@ -50992,7 +50984,6 @@ webpackJsonp([2, 3], [
     function stripComments(input) {
       return input.replace(_commentRe, '');
     }
-
 // all comments except inline source mapping
     var _sourceMappingUrlRe = /\/\*\s*#\s*sourceMappingURL=[\s\S]+?\*\//;
 
@@ -52450,7 +52441,7 @@ webpackJsonp([2, 3], [
                 ])
               });
             });
-          });
+            });
         }
         templateVisitAll(this, astNodes);
         if (this.parent && (astNodes.length === 0 || needsAdditionalRootNode(astNodes))) {
@@ -53586,7 +53577,7 @@ webpackJsonp([2, 3], [
             childData.dynamicQueryIds.forEach(function (queryId) {
               return dynamicQueryIds.add(queryId);
             });
-          });
+            });
           queryMatches = node.queryMatches;
         }
         else if (node instanceof EmbeddedTemplateAst) {
@@ -53599,7 +53590,7 @@ webpackJsonp([2, 3], [
             childData.dynamicQueryIds.forEach(function (queryId) {
               return dynamicQueryIds.add(queryId);
             });
-          });
+            });
           queryMatches = node.queryMatches;
         }
         if (queryMatches) {
@@ -54979,7 +54970,6 @@ webpackJsonp([2, 3], [
         var /** @type {?} */ self = this;
         var /** @type {?} */ scope = BindingScope.empty;
         var /** @type {?} */ calling = new Map();
-
         /**
          * @param {?} context
          * @param {?} value
@@ -55276,7 +55266,6 @@ webpackJsonp([2, 3], [
             throw syntaxError(message);
           }
         }
-
         var /** @type {?} */ recordedSimplifyInContext = function (context, value, depth) {
           try {
             return simplifyInContext(context, value, depth);
@@ -65084,7 +65073,7 @@ webpackJsonp([2, 3], [
             values.forEach(function (value) {
               return _this.append(name, value);
             });
-          });
+            });
           return;
         }
         Object.keys(headers).forEach(function (name) {
@@ -71281,7 +71270,7 @@ webpackJsonp([2, 3], [
                 root_1.root.setTimeout(function () {
                   throw err;
                 });
-              });
+                });
           }
         }
         else {
@@ -71307,7 +71296,7 @@ webpackJsonp([2, 3], [
                 root_1.root.setTimeout(function () {
                   throw err;
                 });
-              });
+                });
           }
         }
       };
@@ -71328,7 +71317,6 @@ webpackJsonp([2, 3], [
         subscriber.error(err);
       }
     }
-
 //# sourceMappingURL=PromiseObservable.js.map
 
     /***/
@@ -73724,7 +73712,6 @@ webpackJsonp([2, 3], [
           }
           return delegate;
         }
-
 // TODO: @JiaLiPassion, support cancel task later if necessary
 
 
@@ -74285,7 +74272,6 @@ webpackJsonp([2, 3], [
             };
           });
         }
-
 /// GEO_LOCATION
         if (_global['navigator'] && _global['navigator'].geolocation) {
           patchPrototype(_global['navigator'].geolocation, ['getCurrentPosition', 'watchPosition']);
