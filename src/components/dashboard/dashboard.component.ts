@@ -13,7 +13,8 @@ import {
   ViewChild,
   OnChanges,
   SimpleChanges,
-  Type
+  Type,
+  ComponentRef
 } from "@angular/core";
 import {WidgetComponent} from "../widget/widget.component";
 
@@ -82,7 +83,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _isDragging: boolean = false;
   private _lastOrder: Array<string> = [];
   private _currentElement: WidgetComponent;
-  private _elements: WidgetComponent[] = [];
+  private _elements: ComponentRef<WidgetComponent>[] = [];
   private _offset: any;
 
   @ContentChildren(WidgetComponent) private _items: QueryList<WidgetComponent>;
@@ -110,7 +111,18 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {
     this._items.forEach(item => {
       item.setEventListener(this._onMouseDown.bind(this));
-      this._elements.push(item);
+      //this is an ugly ugly ugly hack :( but needed in order to make static and dynamic widget works together
+      //FIXME find a way to retrieve a ComponentRef from static widgets instead of this fake one
+      this._elements.push({
+        instance: item,
+        componentType: null,
+        location: null,
+        injector: null,
+        hostView: null,
+        destroy:null,
+        onDestroy:null,
+        changeDetectorRef: null
+      });
     });
     this._calculSizeAndColumn();
     this._offset = {
@@ -135,7 +147,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     const ref = this._viewCntRef.createComponent(factory);
     const newItem: T = ref.instance;
     newItem.setEventListener(this._onMouseDown.bind(this));
-    this._elements.push(newItem);
+    this._elements.push(ref);
     this._calculPositions();
     return newItem;
   }
@@ -145,15 +157,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._elements = [];
   }
 
-  private _getElementIndex(ngItem: WidgetComponent): number {
-    return this._elements.indexOf(ngItem);
-  }
-
   public getWidgetById(widgetId: string): WidgetComponent {
     let element;
     for (let i = 0; i < this._elements.length; i++) {
       element = this._elements[i];
-      if (widgetId == element.widgetId) {
+      if (widgetId == element.instance.widgetId) {
         break;
       }
     }
@@ -164,11 +172,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     let element;
     for (let i = 0; i < this._elements.length; i++) {
       element = this._elements[i];
-      if (element.widgetId == ngItem.widgetId) {
+      if (element.instance.widgetId == ngItem.widgetId) {
         break;
       }
     }
-    this._removeElement(element, this._getElementIndex(element));
+    this._removeElement(element);
   }
 
   public removeItemByIndex(index: number): void {
@@ -181,7 +189,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       }
     }
     if (element) {
-      this._removeElement(element, index);
+      this._removeElement(element);
     }
   }
 
@@ -189,22 +197,23 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     let element;
     for (let i = 0; i < this._elements.length; i++) {
       const widget = this._elements[i];
-      if (widget.widgetId == id) {
+      if (widget.instance.widgetId == id) {
         element = widget;
         break;
       }
     }
     if (element) {
-      this._removeElement(element, this._getElementIndex(element));
+      this._removeElement(element);
     }
 
   }
 
-  private _removeElement(widget: WidgetComponent, index: number): void {
-    if (index < 0 || !widget) return;
+  private _removeElement(widget: ComponentRef<WidgetComponent>): void {
+    if (!widget) return;
     this._enableAnimation();
-    if (this._viewCntRef.length < index) {
-      widget.removeFromParent();
+    const index = widget.hostView == null ? -1 : this._viewCntRef.indexOf(widget.hostView);
+    if (index == -1) {
+      widget.instance.removeFromParent();
     }
     else {
       this._viewCntRef.remove(index);
@@ -222,14 +231,14 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._positionWidget(lines, this._elements, 0, 0, 0)
   }
 
-  private _positionWidget(lines: number[], items: WidgetComponent[], index: number, column: number, row: number): void {
+  private _positionWidget(lines: number[], items: ComponentRef<WidgetComponent>[], index: number, column: number, row: number): void {
     if (!items[index]) {
       const height = (row + 1) * this.widgetsSize[1] + row * this.margin;
       this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
       return;
     }
 
-    const item = items[index];
+    const item = items[index].instance;
     item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
     item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
 
@@ -295,7 +304,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   public get order(): Array<string> {
-    return this._elements.map(elt => elt.widgetId);
+    return this._elements.map(elt => elt.instance.widgetId);
   }
 
   private _onMouseMove(e: any): boolean {
@@ -388,17 +397,17 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  private _compare(widget1: WidgetComponent, widget2: WidgetComponent): number {
-    if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
+  private _compare(widget1: ComponentRef<WidgetComponent>, widget2: ComponentRef<WidgetComponent>): number {
+    if (widget1.instance.offset.top > widget2.instance.offset.top + widget2.instance.height / 2) {
       return +1;
     }
-    if (widget2.offset.top > widget1.offset.top + widget1.height / 2) {
+    if (widget2.instance.offset.top > widget1.instance.offset.top + widget1.instance.height / 2) {
       return -1;
     }
-    if ((widget1.offset.left + (widget1.width / 2)) > (widget2.offset.left + (widget2.width / 2))) {
+    if ((widget1.instance.offset.left + (widget1.instance.width / 2)) > (widget2.instance.offset.left + (widget2.instance.width / 2))) {
       return +1;
     }
-    if ((widget2.offset.left + (widget2.width / 2)) > (widget1.offset.left + (widget1.width / 2))) {
+    if ((widget2.instance.offset.left + (widget2.instance.width / 2)) > (widget1.instance.offset.left + (widget1.instance.width / 2))) {
       return -1;
     }
     return 0;
@@ -406,8 +415,8 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   private _enableAnimation(): void {
     this._elements.forEach(item => {
-      if (item != this._currentElement) {
-        item.addClass('animate');
+      if (item.instance != this._currentElement) {
+        item.instance.addClass('animate');
       }
     });
   }
@@ -415,7 +424,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _disableAnimation(): void {
     setTimeout(() => {
       this._elements.forEach(item => {
-        item.removeClass('animate');
+        item.instance.removeClass('animate');
       });
     }, 400);
   }

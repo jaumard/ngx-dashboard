@@ -1,2 +1,2 @@
-export declare class Ng2DashboardModule {
+export declare class NgDashboardModule {
 }

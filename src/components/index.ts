@@ -16,5 +16,5 @@ import {WidgetHandleDirective} from "../directives/widget-handle.directive";
   ],
   providers: []
 })
-export class Ng2DashboardModule {
+export class NgDashboardModule {
 }

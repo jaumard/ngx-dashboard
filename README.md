@@ -54,7 +54,7 @@ To dynamically add your widget you also need to declare it under "entryComponent
 ```js
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {Ng2DashboardModule} from 'ngx-dashboard';
+import {NgDashboardModule} from 'ngx-dashboard';
 
 import { AppComponent } from './app.component';
 import {MyWidgetComponent} from './my-widget/my-widget.component';
@@ -69,7 +69,7 @@ import {MyWidgetComponent} from './my-widget/my-widget.component';
   ],
   imports: [
     BrowserModule,
-    Ng2DashboardModule
+    NgDashboardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -54,7 +54,18 @@ var DashboardComponent = (function () {
         var _this = this;
         this._items.forEach(function (item) {
             item.setEventListener(_this._onMouseDown.bind(_this));
-            _this._elements.push(item);
+            //this is an ugly ugly ugly hack :( but needed in order to make static and dynamic widget works together
+            //FIXME find a way to retrieve a ComponentRef from static widgets instead of this fake one
+            _this._elements.push({
+                instance: item,
+                componentType: null,
+                location: null,
+                injector: null,
+                hostView: null,
+                destroy: null,
+                onDestroy: null,
+                changeDetectorRef: null
+            });
         });
         this._calculSizeAndColumn();
         this._offset = {
@@ -76,7 +87,7 @@ var DashboardComponent = (function () {
         var ref = this._viewCntRef.createComponent(factory);
         var newItem = ref.instance;
         newItem.setEventListener(this._onMouseDown.bind(this));
-        this._elements.push(newItem);
+        this._elements.push(ref);
         this._calculPositions();
         return newItem;
     };
@@ -84,14 +95,11 @@ var DashboardComponent = (function () {
         this._viewCntRef.clear();
         this._elements = [];
     };
-    DashboardComponent.prototype._getElementIndex = function (ngItem) {
-        return this._elements.indexOf(ngItem);
-    };
     DashboardComponent.prototype.getWidgetById = function (widgetId) {
         var element;
         for (var i = 0; i < this._elements.length; i++) {
             element = this._elements[i];
-            if (widgetId == element.widgetId) {
+            if (widgetId == element.instance.widgetId) {
                 break;
             }
         }
@@ -101,11 +109,11 @@ var DashboardComponent = (function () {
         var element;
         for (var i = 0; i < this._elements.length; i++) {
             element = this._elements[i];
-            if (element.widgetId == ngItem.widgetId) {
+            if (element.instance.widgetId == ngItem.widgetId) {
                 break;
             }
         }
-        this._removeElement(element, this._getElementIndex(element));
+        this._removeElement(element);
     };
     DashboardComponent.prototype.removeItemByIndex = function (index) {
         var element;
@@ -117,28 +125,29 @@ var DashboardComponent = (function () {
             }
         }
         if (element) {
-            this._removeElement(element, index);
+            this._removeElement(element);
         }
     };
     DashboardComponent.prototype.removeItemById = function (id) {
         var element;
         for (var i = 0; i < this._elements.length; i++) {
             var widget = this._elements[i];
-            if (widget.widgetId == id) {
+            if (widget.instance.widgetId == id) {
                 element = widget;
                 break;
             }
         }
         if (element) {
-            this._removeElement(element, this._getElementIndex(element));
+            this._removeElement(element);
         }
     };
-    DashboardComponent.prototype._removeElement = function (widget, index) {
-        if (index < 0 || !widget)
+    DashboardComponent.prototype._removeElement = function (widget) {
+        if (!widget)
             return;
         this._enableAnimation();
-        if (this._viewCntRef.length < index) {
-            widget.removeFromParent();
+        var index = widget.hostView == null ? -1 : this._viewCntRef.indexOf(widget.hostView);
+        if (index == -1) {
+            widget.instance.removeFromParent();
         }
         else {
             this._viewCntRef.remove(index);
@@ -160,7 +169,7 @@ var DashboardComponent = (function () {
             this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
             return;
         }
-        var item = items[index];
+        var item = items[index].instance;
         item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
         item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
         var haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
@@ -218,7 +227,7 @@ var DashboardComponent = (function () {
     };
     Object.defineProperty(DashboardComponent.prototype, "order", {
         get: function () {
-            return this._elements.map(function (elt) { return elt.widgetId; });
+            return this._elements.map(function (elt) { return elt.instance.widgetId; });
         },
         enumerable: true,
         configurable: true
@@ -301,16 +310,16 @@ var DashboardComponent = (function () {
         };
     };
     DashboardComponent.prototype._compare = function (widget1, widget2) {
-        if (widget1.offset.top > widget2.offset.top + widget2.height / 2) {
+        if (widget1.instance.offset.top > widget2.instance.offset.top + widget2.instance.height / 2) {
             return +1;
         }
-        if (widget2.offset.top > widget1.offset.top + widget1.height / 2) {
+        if (widget2.instance.offset.top > widget1.instance.offset.top + widget1.instance.height / 2) {
             return -1;
         }
-        if ((widget1.offset.left + (widget1.width / 2)) > (widget2.offset.left + (widget2.width / 2))) {
+        if ((widget1.instance.offset.left + (widget1.instance.width / 2)) > (widget2.instance.offset.left + (widget2.instance.width / 2))) {
             return +1;
         }
-        if ((widget2.offset.left + (widget2.width / 2)) > (widget1.offset.left + (widget1.width / 2))) {
+        if ((widget2.instance.offset.left + (widget2.instance.width / 2)) > (widget1.instance.offset.left + (widget1.instance.width / 2))) {
             return -1;
         }
         return 0;
@@ -319,8 +328,8 @@ var DashboardComponent = (function () {
     DashboardComponent.prototype._enableAnimation = function () {
         var _this = this;
         this._elements.forEach(function (item) {
-            if (item != _this._currentElement) {
-                item.addClass('animate');
+            if (item.instance != _this._currentElement) {
+                item.instance.addClass('animate');
             }
         });
     };
@@ -328,7 +337,7 @@ var DashboardComponent = (function () {
         var _this = this;
         setTimeout(function () {
             _this._elements.forEach(function (item) {
-                item.removeClass('animate');
+                item.instance.removeClass('animate');
             });
         }, 400);
     };
@@ -453,7 +462,7 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
             __WEBPACK_IMPORTED_MODULE_2__angular_forms__["a" /* FormsModule */],
             __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* HttpModule */],
-            __WEBPACK_IMPORTED_MODULE_4__dist__["Ng2DashboardModule"]
+            __WEBPACK_IMPORTED_MODULE_4__dist__["NgDashboardModule"]
         ],
         providers: [],
         bootstrap: [__WEBPACK_IMPORTED_MODULE_5__app_component__["a" /* AppComponent */]]
@@ -613,12 +622,12 @@ var core_1 = __webpack_require__(9);
 var dashboard_component_1 = __webpack_require__(128);
 var widget_component_1 = __webpack_require__(74);
 var widget_handle_directive_1 = __webpack_require__(75);
-var Ng2DashboardModule = (function () {
-    function Ng2DashboardModule() {
+var NgDashboardModule = (function () {
+    function NgDashboardModule() {
     }
-    return Ng2DashboardModule;
+    return NgDashboardModule;
 }());
-Ng2DashboardModule.decorators = [
+NgDashboardModule.decorators = [
     { type: core_1.NgModule, args: [{
                 declarations: [
                     dashboard_component_1.DashboardComponent,
@@ -634,8 +643,8 @@ Ng2DashboardModule.decorators = [
             },] },
 ];
 /** @nocollapse */
-Ng2DashboardModule.ctorParameters = function () { return []; };
-exports.Ng2DashboardModule = Ng2DashboardModule;
+NgDashboardModule.ctorParameters = function () { return []; };
+exports.NgDashboardModule = NgDashboardModule;
 
 
 /***/ }),
