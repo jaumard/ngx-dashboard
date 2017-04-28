@@ -1,5 +1,5 @@
 # ngx-dashboard
-Dashboard library for angular 2, 4 and more
+Dashboard library for angular 4 and more
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][npm-download]][npm-url]
@@ -26,7 +26,7 @@ See demo source code here: https://github.com/jaumard/ngx-dashboard/tree/master/
 To do this you need to extend the WidgetComponent like this: 
 
 ```js
-import {Component, Renderer, ElementRef, forwardRef} from "@angular/core";
+import {Component, Renderer2, ElementRef, forwardRef} from "@angular/core";
 import {WidgetComponent} from "ngx-dashboard";
 
 @Component({
@@ -38,7 +38,7 @@ import {WidgetComponent} from "ngx-dashboard";
 export class MyWidgetComponent extends WidgetComponent {
   @Input() public widgetId: string;
   
-  constructor(ngEl: ElementRef, renderer: Renderer) {
+  constructor(ngEl: ElementRef, renderer: Renderer2) {
     super(ngEl, renderer);
   }
 }
@@ -47,7 +47,7 @@ export class MyWidgetComponent extends WidgetComponent {
 
 The `providers` part is mandatory, if you miss it your widget will not be see as a widget.
 
-The `@Input()` is also mandatory if you want to use `removeById` because angular 2 doesn't inherit annotations yet.
+The `@Input()` is also mandatory if you want to use `removeById` because angular 4 doesn't inherit annotations yet.
 
 To dynamically add your widget you also need to declare it under "entryComponents" on your app module like this: 
 
