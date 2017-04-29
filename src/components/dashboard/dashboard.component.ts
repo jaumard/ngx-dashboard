@@ -160,8 +160,8 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   public getWidgetById(widgetId: string): WidgetComponent {
     let element;
     for (let i = 0; i < this._elements.length; i++) {
-      element = this._elements[i];
-      if (widgetId == element.instance.widgetId) {
+      element = this._elements[i].instance;
+      if (widgetId == element.widgetId) {
         break;
       }
     }
