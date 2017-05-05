@@ -4,7 +4,7 @@
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
-    "start": "ng serve",
+    "start": "ng server --host=0.0.0.0",
     "lint": "tslint \"src/**/*.ts\"",
     "build": "ng build prod --base-href=/ngx-dashboard/demo/demoDist/",
     "test": "ng test",

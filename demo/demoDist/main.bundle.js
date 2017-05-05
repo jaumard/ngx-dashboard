@@ -98,8 +98,8 @@ var DashboardComponent = (function () {
     DashboardComponent.prototype.getWidgetById = function (widgetId) {
         var element;
         for (var i = 0; i < this._elements.length; i++) {
-            element = this._elements[i];
-            if (widgetId == element.instance.widgetId) {
+            element = this._elements[i].instance;
+            if (widgetId == element.widgetId) {
                 break;
             }
         }
@@ -165,8 +165,20 @@ var DashboardComponent = (function () {
     };
     DashboardComponent.prototype._positionWidget = function (lines, items, index, column, row) {
         if (!items[index]) {
-            var height = (row + 1) * this.widgetsSize[1] + row * this.margin;
-            this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
+            var remainingHeight = 0;
+            for (var i = 0; i < lines.length; i++) {
+                if (remainingHeight < lines[i]) {
+                    remainingHeight = lines[i];
+                }
+                lines[i]--;
+            }
+            if (remainingHeight > 0) {
+                this._positionWidget(lines, items, index, column, row + 1);
+            }
+            else {
+                var height = row * this.widgetsSize[1] + row * this.margin;
+                this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
+            }
             return;
         }
         var item = items[index].instance;
@@ -178,22 +190,22 @@ var DashboardComponent = (function () {
             haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
             if (column >= this._nbColumn) {
                 column = 0;
-                for (var i_1 = 0; i_1 < lines.length; i_1++) {
-                    lines[i_1]--;
+                for (var i = 0; i < lines.length; i++) {
+                    lines[i]--;
                 }
                 row++;
                 haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
             }
             if (!haveEnoughSpace)
                 continue;
-            for (var i_2 = 1; i_2 < item.size[0]; i_2++) {
-                haveEnoughSpace = lines[column + i_2] <= 0;
+            for (var i = 1; i < item.size[0]; i++) {
+                haveEnoughSpace = lines[column + i] <= 0;
                 if (!haveEnoughSpace)
                     break;
             }
         }
-        var left = column * this.widgetsSize[0] + column * this.margin;
-        var top = row * this.widgetsSize[1] + row * this.margin;
+        var left = column * this.widgetsSize[0] + column * this.margin + this.margin / 2;
+        var top = row * this.widgetsSize[1] + row * this.margin + this.margin / 2;
         lines[column] = item.size[1];
         for (var i = 1; i < item.size[0]; i++) {
             lines[column + i] = item.size[1];
@@ -570,7 +582,7 @@ exports = module.exports = __webpack_require__(52)();
 
 
 // module
-exports.push([module.i, ".dashboard {\n  width: 100%;\n}\n\n.dashboard /deep/ .widget {\n  background-color: darkgrey;\n}\n\n.widget .close {\n  position: absolute;\n  top: 5px;\n  right: 5px;\n  cursor: pointer;\n}\n\n.handle {\n  cursor: move;\n}\n", ""]);
+exports.push([module.i, ".dashboard {\n  width: 100%;\n  overflow: hidden;\n  background: whitesmoke;\n}\n\n.dashboard /deep/ .widget {\n  background-color: darkgrey;\n}\n\n.widget .close {\n  position: absolute;\n  top: 5px;\n  right: 5px;\n  cursor: pointer;\n}\n\n.handle {\n  cursor: move;\n}\n", ""]);
 
 // exports
 
@@ -601,7 +613,7 @@ module.exports = module.exports.toString();
 /***/ 294:
 /***/ (function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onOrderChange)=\"logOrder($event)\" (onDragStart)=\"log($event, 'ondragstart')\"\n           (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\"\n           [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div widgetHandle class=\"head handle\">Large widget [2, 1] handle only on text</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div widgetHandle class=\"head handle\">Tall widget [1, 2] handle only on text</div>\n  </widget>\n  <widget widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\" class=\"handle\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n  <!--app-my-widget widgetId=\"myId\">\n    <div class=\"close\" (click)=\"close($event, 'myId')\">X</div>\n  </app-my-widget>\n  <widget [size]=\"[2, 1]\">\n    <div class=\"head\">Widget 1</div>\n  </widget>\n  <widget [size]=\"[2, 2]\">\n    <div class=\"head\">Widget 3</div>\n  </widget-->\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onOrderChange)=\"logOrder($event)\" (onDragStart)=\"log($event, 'ondragstart')\"\n           (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\"\n           [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <!--widget [size]=\"[1, 1]\" widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small2\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <!--widget [size]=\"[1, 1]\" widgetId=\"small3\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n\n  <widget [size]=\"[2, 3]\" widgetId=\"big2\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 3]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small4\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small5\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget-->\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div widgetHandle class=\"head handle\">Large widget [2, 1] handle only on text</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div widgetHandle class=\"head handle\">Tall widget [1, 2] handle only on text</div>\n  </widget>\n  <widget widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\" class=\"handle\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n</dashboard>\n"
 
 /***/ }),
 

@@ -8,6 +8,29 @@
            (onDrag)="log($event, 'ondragmove')" class="dashboard" [widgetsSize]="widgetsSize"
            [margin]="dashboardMargin">
 
+  <widget [size]="[2, 2]" widgetId="big" class="handle">
+    <div class="head">Big widget [2, 2]</div>
+  </widget>
+  <!--widget [size]="[1, 1]" widgetId="small" class="handle">
+    <div class="head">Small widget [1, 1]</div>
+  </widget>
+  <widget [size]="[1, 1]" widgetId="small2" class="handle">
+    <div class="head">Small widget [1, 1]</div>
+  </widget>
+  <!--widget [size]="[1, 1]" widgetId="small3" class="handle">
+    <div class="head">Small widget [1, 1]</div>
+  </widget>
+
+  <widget [size]="[2, 3]" widgetId="big2" class="handle">
+    <div class="head">Big widget [2, 3]</div>
+  </widget>
+  <widget [size]="[1, 1]" widgetId="small4" class="handle">
+    <div class="head">Small widget [1, 1]</div>
+  </widget>
+  <widget [size]="[1, 1]" widgetId="small5" class="handle">
+    <div class="head">Small widget [1, 1]</div>
+  </widget-->
+
   <widget [size]="[2, 1]" widgetId="large">
     <div widgetHandle class="head handle">Large widget [2, 1] handle only on text</div>
   </widget>
@@ -25,13 +48,4 @@
     <div class="close" (click)="close($event, i)">X</div>
   </widget>
 
-  <!--app-my-widget widgetId="myId">
-    <div class="close" (click)="close($event, 'myId')">X</div>
-  </app-my-widget>
-  <widget [size]="[2, 1]">
-    <div class="head">Widget 1</div>
-  </widget>
-  <widget [size]="[2, 2]">
-    <div class="head">Widget 3</div>
-  </widget-->
 </dashboard>

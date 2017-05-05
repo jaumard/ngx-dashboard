@@ -119,8 +119,8 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
         location: null,
         injector: null,
         hostView: null,
-        destroy:null,
-        onDestroy:null,
+        destroy: null,
+        onDestroy: null,
         changeDetectorRef: null
       });
     });
@@ -233,8 +233,20 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   private _positionWidget(lines: number[], items: ComponentRef<WidgetComponent>[], index: number, column: number, row: number): void {
     if (!items[index]) {
-      const height = (row + 1) * this.widgetsSize[1] + row * this.margin;
-      this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
+      let remainingHeight = 0;
+      for (let i = 0; i < lines.length; i++) {
+        if (remainingHeight < lines[i]) {
+          remainingHeight = lines[i];
+        }
+        lines[i]--;
+      }
+      if (remainingHeight > 0) {
+        this._positionWidget(lines, items, index, column, row + 1);
+      }
+      else {
+        const height = row * this.widgetsSize[1] + row * this.margin;
+        this._renderer.setStyle(this._ngEl.nativeElement, 'height', height + 'px');
+      }
       return;
     }
 
@@ -263,11 +275,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       }
     }
 
-    const left = column * this.widgetsSize[0] + column * this.margin;
-    const top = row * this.widgetsSize[1] + row * this.margin;
+    const left = column * this.widgetsSize[0] + column * this.margin + this.margin / 2;
+    const top = row * this.widgetsSize[1] + row * this.margin + this.margin / 2;
 
     lines[column] = item.size[1];
-    for (var i = 1; i < item.size[0]; i++) {
+    for (let i = 1; i < item.size[0]; i++) {
       lines[column + i] = item.size[1];
     }
 
