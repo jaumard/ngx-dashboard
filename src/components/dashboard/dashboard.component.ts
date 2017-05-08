@@ -384,17 +384,20 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _getOffsetFromTarget(e: any) {
     let x;
     let y;
+    let scrollOffset = 0;
     if (this._isTouchEvent(e)) {
       e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
-      x = e.pageX - e.target.offsetLeft;
-      y = e.pageY - e.target.offsetTop;
+      const rect = e.target.getBoundingClientRect();
+      x = e.pageX - rect.left;
+      y = e.pageY - rect.top;
+      scrollOffset = (<any>document).body.scrollTop;
     }
     else {
       x = e.offsetX || e.offsetLeft;
       y = e.offsetY || e.offsetTop;
     }
 
-    return {top: y, left: x};
+    return {top: y - scrollOffset, left: x};
   }
 
   private _getMousePosition(e: any): any {

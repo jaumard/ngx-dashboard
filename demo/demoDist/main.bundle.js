@@ -300,16 +300,19 @@ var DashboardComponent = (function () {
     DashboardComponent.prototype._getOffsetFromTarget = function (e) {
         var x;
         var y;
+        var scrollOffset = 0;
         if (this._isTouchEvent(e)) {
             e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
-            x = e.pageX - e.target.offsetLeft;
-            y = e.pageY - e.target.offsetTop;
+            var rect = e.target.getBoundingClientRect();
+            x = e.pageX - rect.left;
+            y = e.pageY - rect.top;
+            scrollOffset = document.body.scrollTop;
         }
         else {
             x = e.offsetX || e.offsetLeft;
             y = e.offsetY || e.offsetTop;
         }
-        return { top: y, left: x };
+        return { top: y - scrollOffset, left: x };
     };
     DashboardComponent.prototype._getMousePosition = function (e) {
         e = this._manageEvent(e);
