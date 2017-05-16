@@ -1,20 +1,20 @@
 import {
-  EventEmitter,
-  ContentChildren,
-  Component,
-  Input,
-  Output,
   AfterViewInit,
-  Renderer2,
-  ElementRef,
-  QueryList,
-  ViewContainerRef,
+  Component,
   ComponentFactoryResolver,
-  ViewChild,
+  ComponentRef,
+  ContentChildren,
+  ElementRef,
+  EventEmitter,
+  Input,
   OnChanges,
+  Output,
+  QueryList,
+  Renderer2,
   SimpleChanges,
   Type,
-  ComponentRef
+  ViewChild,
+  ViewContainerRef
 } from "@angular/core";
 import {WidgetComponent} from "../widget/widget.component";
 
@@ -27,14 +27,15 @@ import {WidgetComponent} from "../widget/widget.component";
     '(document:mouseup)': '_onMouseUp($event)',
     '(document:touchmove)': '_onMouseMove($event)',
     '(document:touchend)': '_onMouseUp($event)',
-    '(document:touchcancel)': '_onMouseUp($event)'
+    '(document:touchcancel)': '_onMouseUp($event)',
+    '(document:scroll)': '_onScroll($event)'
   },
   styles: [`
     :host {
       position: relative;
       display: block;
     }
-    
+
     :host /deep/ .widget {
       position: absolute;
       top: 0;
@@ -48,21 +49,21 @@ import {WidgetComponent} from "../widget/widget.component";
       /* Non-prefixed version, currently
                              not supported by any browser */
     }
-    
+
     :host /deep/ .widget.animate {
       -webkit-transition: all 300ms ease-out;
       -moz-transition: all 300ms ease-out;
       -o-transition: all 300ms ease-out;
       transition: all 300ms ease-out;
     }
-    
+
     :host /deep/ .widget.active {
       z-index: 100000;
     }`
   ]
 })
 export class DashboardComponent implements AfterViewInit, OnChanges {
-//	Event Emitters
+  //  Event Emitters
   @Output() public onDragStart: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
   @Output() public onDrag: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
   @Output() public onDragEnd: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
@@ -72,11 +73,13 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   @Input() widgetsSize: number[] = [150, 150];
   @Input() THRESHOLD: number = 10;
 
-  //	Public variables
+  //    Public variables
   public dragEnable: boolean = true;
   @ViewChild('target', {read: ViewContainerRef}) private _viewCntRef: ViewContainerRef;
 
-  //	Private variables
+  //    Private variables
+  static SCROLL_STEP: number = 15;
+  static SCROLL_DELAY: number = 100;
   private _width: number = 0;
   private _nbColumn: number = 0;
   private _previousPosition: any = {top: 0, left: 0};
@@ -85,6 +88,9 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _currentElement: WidgetComponent;
   private _elements: ComponentRef<WidgetComponent>[] = [];
   private _offset: any;
+  private _scrollChange: number = 0;
+  private _isScrolling: boolean = false;
+  private _currentMouseEvent: any;
 
   @ContentChildren(WidgetComponent) private _items: QueryList<WidgetComponent>;
 
@@ -251,8 +257,8 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     }
 
     const item = items[index].instance;
-    item.width = this.widgetsSize[0] * item.size[0] + (item.size[0] - 1) * this.margin;
-    item.height = this.widgetsSize[1] * item.size[1] + (item.size[1] - 1) * this.margin;
+    item.width = this.widgetsSize[0] * item.size[0] + ( item.size[0] - 1 ) * this.margin;
+    item.height = this.widgetsSize[1] * item.size[1] + ( item.size[1] - 1 ) * this.margin;
 
     let haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
     while (lines[column] > 0 || !haveEnoughSpace) {
@@ -271,7 +277,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       if (!haveEnoughSpace) continue;
       for (let i = 1; i < item.size[0]; i++) {
         haveEnoughSpace = lines[column + i] <= 0;
-        if (!haveEnoughSpace)break;
+        if (!haveEnoughSpace) break;
       }
     }
 
@@ -289,7 +295,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   private _calculSizeAndColumn(): void {
     this._width = this._ngEl.nativeElement.offsetWidth;
-    this._nbColumn = Math.floor(this._width / (this.widgetsSize[0] + this.margin));
+    this._nbColumn = Math.floor(this._width / ( this.widgetsSize[0] + this.margin ));
   }
 
   private _onResize(e: any): void {
@@ -311,6 +317,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
         e.preventDefault();
         e.stopPropagation();
       }
+      this._currentMouseEvent = e;
     }
     return true;
   }
@@ -321,6 +328,23 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
   private _onMouseMove(e: any): boolean {
     if (this._isDragging) {
+      //scroll while drag
+      if (this._isTouchEvent(e))
+        e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
+      let _pageY = e.clientY;
+      const y = _pageY;
+      const container = document.body;
+      const containerTop = container.offsetTop;
+
+      if (window.innerHeight - y < 80) {
+        this._isScrolling = true;
+        this._scrollDown(container, y, e);
+      } else if (containerTop + y < 80) {
+        this._isScrolling = true;
+        this._scrollUp(container, y, e);
+      } else {
+        this._isScrolling = false;
+      }
       this.onDrag.emit(this._currentElement);
       const pos = this._getMousePosition(e);
 
@@ -339,6 +363,48 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
         e.preventDefault();
         e.stopPropagation();
       }
+      this._currentMouseEvent = e;
+    }
+    return true;
+  }
+
+  private _scrollDown(container: any, pageY: number, e: any): boolean {
+    if (this._isDragging && container.scrollTop < ( this._ngEl.nativeElement.offsetHeight - window.innerHeight + this._currentElement.height ) && this._isScrolling) {
+      container.scrollTop += DashboardComponent.SCROLL_STEP;
+      this._scrollChange = DashboardComponent.SCROLL_STEP;
+      setTimeout(this._scrollDown.bind(this, container, pageY, e), DashboardComponent.SCROLL_DELAY);
+    }
+    return true;
+  }
+
+  private _scrollUp(container: any, pageY: number, e: any): boolean {
+    if (this._isDragging && container.scrollTop != 0 && this._isScrolling) {
+      container.scrollTop -= DashboardComponent.SCROLL_STEP;
+      this._scrollChange = -DashboardComponent.SCROLL_STEP;
+      setTimeout(this._scrollUp.bind(this, container, pageY, e), DashboardComponent.SCROLL_DELAY);
+    }
+    return true;
+  }
+
+  private _onScroll(e: any): boolean {
+    if (this._isDragging) {
+      let refPos = this._ngEl.nativeElement.getBoundingClientRect();
+      let left;
+      let top;
+      left = this._currentMouseEvent.clientX - refPos.left;
+      top = this._currentMouseEvent.clientY - refPos.top;
+      this.onDrag.emit(this._currentElement);
+      left = left - this._offset.left;
+      let top_1 = top - this._offset.top + this._scrollChange;
+      if (Math.abs(top - this._previousPosition.top) > this.THRESHOLD
+        || Math.abs(left - this._previousPosition.left) > this.THRESHOLD) {
+        this._elements.sort(this._compare);
+        this._calculPositions();
+        //  this._previousPosition = pos;
+
+      }
+      this._currentElement.setPosition(top_1, left);
+
     }
     return true;
   }
@@ -346,6 +412,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _onMouseUp(e: any): boolean {
     if (this._isDragging) {
       this._isDragging = false;
+      this._isScrolling = false;
       if (this._currentElement) {
         this.onDragEnd.emit(this._currentElement);
         this._currentElement.removeClass('active');
@@ -378,7 +445,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   }
 
   private _isTouchEvent(e: any): any {
-    return ((<any>window).TouchEvent && e instanceof TouchEvent) || (e.touches || e.changedTouches);
+    return ( ( <any>window ).TouchEvent && e instanceof TouchEvent ) || ( e.touches || e.changedTouches );
   }
 
   private _getOffsetFromTarget(e: any) {
@@ -390,7 +457,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       const rect = e.target.getBoundingClientRect();
       x = e.pageX - rect.left;
       y = e.pageY - rect.top;
-      scrollOffset = (<any>document).body.scrollTop;
+      scrollOffset = ( <any>document ).body.scrollTop;
     }
     else {
       x = e.offsetX || e.offsetLeft;
@@ -419,10 +486,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     if (widget2.instance.offset.top > widget1.instance.offset.top + widget1.instance.height / 2) {
       return -1;
     }
-    if ((widget1.instance.offset.left + (widget1.instance.width / 2)) > (widget2.instance.offset.left + (widget2.instance.width / 2))) {
+    if (( widget1.instance.offset.left + ( widget1.instance.width / 2 ) ) > ( widget2.instance.offset.left + ( widget2.instance.width / 2 ) )) {
       return +1;
     }
-    if ((widget2.instance.offset.left + (widget2.instance.width / 2)) > (widget1.instance.offset.left + (widget1.instance.width / 2))) {
+    if (( widget2.instance.offset.left + ( widget2.instance.width / 2 ) ) > ( widget1.instance.offset.left + ( widget1.instance.width / 2 ) )) {
       return -1;
     }
     return 0;
