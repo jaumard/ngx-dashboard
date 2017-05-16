@@ -13,7 +13,7 @@ var DashboardComponent = (function () {
         this._componentFactoryResolver = _componentFactoryResolver;
         this._ngEl = _ngEl;
         this._renderer = _renderer;
-        //	Event Emitters
+        //  Event Emitters
         this.onDragStart = new core_1.EventEmitter();
         this.onDrag = new core_1.EventEmitter();
         this.onDragEnd = new core_1.EventEmitter();
@@ -21,15 +21,16 @@ var DashboardComponent = (function () {
         this.margin = 10;
         this.widgetsSize = [150, 150];
         this.THRESHOLD = 10;
-        //	Public variables
+        //    Public variables
         this.dragEnable = true;
-        //	Private variables
         this._width = 0;
         this._nbColumn = 0;
         this._previousPosition = { top: 0, left: 0 };
         this._isDragging = false;
         this._lastOrder = [];
         this._elements = [];
+        this._scrollChange = 0;
+        this._isScrolling = false;
     }
     Object.defineProperty(DashboardComponent.prototype, "width", {
         get: function () {
@@ -234,6 +235,7 @@ var DashboardComponent = (function () {
                 e.preventDefault();
                 e.stopPropagation();
             }
+            this._currentMouseEvent = e;
         }
         return true;
     };
@@ -246,27 +248,83 @@ var DashboardComponent = (function () {
     });
     DashboardComponent.prototype._onMouseMove = function (e) {
         if (this._isDragging) {
+            //scroll while drag
+            if (this._isTouchEvent(e))
+                e = e.touches.length > 0 ? e.touches[0] : e.changedTouches[0];
+            var _pageY = e.clientY;
+            var y = _pageY;
+            var container = document.body;
+            var containerTop = container.offsetTop;
+            if (window.innerHeight - y < 80) {
+                this._isScrolling = true;
+                this._scrollDown(container, y, e);
+            }
+            else if (containerTop + y < 80) {
+                this._isScrolling = true;
+                this._scrollUp(container, y, e);
+            }
+            else {
+                this._isScrolling = false;
+            }
             this.onDrag.emit(this._currentElement);
             var pos = this._getMousePosition(e);
             var left = pos.left - this._offset.left;
-            var top_1 = pos.top - this._offset.top;
+            var top_2 = pos.top - this._offset.top;
             if (Math.abs(pos.top - this._previousPosition.top) > this.THRESHOLD
                 || Math.abs(pos.left - this._previousPosition.left) > this.THRESHOLD) {
                 this._elements.sort(this._compare);
                 this._calculPositions();
                 this._previousPosition = pos;
             }
-            this._currentElement.setPosition(top_1, left);
+            this._currentElement.setPosition(top_2, left);
             if (this._isTouchEvent(e)) {
                 e.preventDefault();
                 e.stopPropagation();
             }
+            this._currentMouseEvent = e;
+        }
+        return true;
+    };
+    DashboardComponent.prototype._scrollDown = function (container, pageY, e) {
+        if (this._isDragging && container.scrollTop < (this._ngEl.nativeElement.offsetHeight - window.innerHeight + this._currentElement.height) && this._isScrolling) {
+            container.scrollTop += DashboardComponent.SCROLL_STEP;
+            this._scrollChange = DashboardComponent.SCROLL_STEP;
+            setTimeout(this._scrollDown.bind(this, container, pageY, e), DashboardComponent.SCROLL_DELAY);
+        }
+        return true;
+    };
+    DashboardComponent.prototype._scrollUp = function (container, pageY, e) {
+        if (this._isDragging && container.scrollTop != 0 && this._isScrolling) {
+            container.scrollTop -= DashboardComponent.SCROLL_STEP;
+            this._scrollChange = -DashboardComponent.SCROLL_STEP;
+            setTimeout(this._scrollUp.bind(this, container, pageY, e), DashboardComponent.SCROLL_DELAY);
+        }
+        return true;
+    };
+    DashboardComponent.prototype._onScroll = function (e) {
+        if (this._isDragging) {
+            var refPos = this._ngEl.nativeElement.getBoundingClientRect();
+            var left = void 0;
+            var top_3;
+            left = this._currentMouseEvent.clientX - refPos.left;
+            top_3 = this._currentMouseEvent.clientY - refPos.top;
+            this.onDrag.emit(this._currentElement);
+            left = left - this._offset.left;
+            var top_1 = top_3 - this._offset.top + this._scrollChange;
+            if (Math.abs(top_3 - this._previousPosition.top) > this.THRESHOLD
+                || Math.abs(left - this._previousPosition.left) > this.THRESHOLD) {
+                this._elements.sort(this._compare);
+                this._calculPositions();
+                //  this._previousPosition = pos;
+            }
+            this._currentElement.setPosition(top_1, left);
         }
         return true;
     };
     DashboardComponent.prototype._onMouseUp = function (e) {
         if (this._isDragging) {
             this._isDragging = false;
+            this._isScrolling = false;
             if (this._currentElement) {
                 this.onDragEnd.emit(this._currentElement);
                 this._currentElement.removeClass('active');
@@ -358,6 +416,9 @@ var DashboardComponent = (function () {
     };
     return DashboardComponent;
 }());
+//    Private variables
+DashboardComponent.SCROLL_STEP = 15;
+DashboardComponent.SCROLL_DELAY = 100;
 DashboardComponent.decorators = [
     { type: core_1.Component, args: [{
                 selector: 'dashboard',
@@ -368,9 +429,10 @@ DashboardComponent.decorators = [
                     '(document:mouseup)': '_onMouseUp($event)',
                     '(document:touchmove)': '_onMouseMove($event)',
                     '(document:touchend)': '_onMouseUp($event)',
-                    '(document:touchcancel)': '_onMouseUp($event)'
+                    '(document:touchcancel)': '_onMouseUp($event)',
+                    '(document:scroll)': '_onScroll($event)'
                 },
-                styles: ["\n    :host {\n      position: relative;\n      display: block;\n    }\n    \n    :host /deep/ .widget {\n      position: absolute;\n      top: 0;\n      left: 0;\n      -webkit-touch-callout: none; /* iOS Safari */\n      -webkit-user-select: none; /* Chrome/Safari/Opera */\n      -khtml-user-select: none; /* Konqueror */\n      -moz-user-select: none; /* Firefox */\n      -ms-user-select: none; /* Internet Explorer/Edge */\n      user-select: none;\n      /* Non-prefixed version, currently\n                             not supported by any browser */\n    }\n    \n    :host /deep/ .widget.animate {\n      -webkit-transition: all 300ms ease-out;\n      -moz-transition: all 300ms ease-out;\n      -o-transition: all 300ms ease-out;\n      transition: all 300ms ease-out;\n    }\n    \n    :host /deep/ .widget.active {\n      z-index: 100000;\n    }"
+                styles: ["\n    :host {\n      position: relative;\n      display: block;\n    }\n\n    :host /deep/ .widget {\n      position: absolute;\n      top: 0;\n      left: 0;\n      -webkit-touch-callout: none; /* iOS Safari */\n      -webkit-user-select: none; /* Chrome/Safari/Opera */\n      -khtml-user-select: none; /* Konqueror */\n      -moz-user-select: none; /* Firefox */\n      -ms-user-select: none; /* Internet Explorer/Edge */\n      user-select: none;\n      /* Non-prefixed version, currently\n                             not supported by any browser */\n    }\n\n    :host /deep/ .widget.animate {\n      -webkit-transition: all 300ms ease-out;\n      -moz-transition: all 300ms ease-out;\n      -o-transition: all 300ms ease-out;\n      transition: all 300ms ease-out;\n    }\n\n    :host /deep/ .widget.active {\n      z-index: 100000;\n    }"
                 ]
             },] },
 ];
