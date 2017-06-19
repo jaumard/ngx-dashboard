@@ -1,14 +1,12 @@
 {
   "name": "ngx-dashboard-base",
-  "version": "1.1.3",
+  "version": "1.1.5",
   "description": "Dashboard library for Angular 4 and more",
   "main": "bundles/ngx-dashboard.umd.js",
   "module": "index.js",
   "typings": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "publishPatch": "cd src/dist && npm version patch && npm run push",
-    "push": "git push --tags && git push",
     "build": "ngm build -p src --clean"
   },
   "repository": {
@@ -33,12 +31,12 @@
     "@angular/core": ">=4.0.0"
   },
   "devDependencies": {
-    "@angular/compiler": "^4.0.3",
-    "@angular/compiler-cli": "^4.0.3",
-    "@angular/core": "^4.0.3",
-    "rxjs": "^5.1.0",
+    "@angular/compiler": "^4.2.3",
+    "@angular/compiler-cli": "^4.2.3",
+    "@angular/core": "^4.2.3",
+    "rxjs": "^5.4.1",
     "typescript": "^2.2.2",
-    "zone.js": "0.8.5",
-    "ngm-cli": "^0.5.0"
+    "zone.js": "0.8.12",
+    "ngm-cli": "^0.5.2"
   }
 }

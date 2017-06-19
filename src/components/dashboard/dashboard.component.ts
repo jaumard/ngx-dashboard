@@ -257,6 +257,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     }
 
     const item = items[index].instance;
+
+    if(item.size[0] > this._nbColumn) {
+      item.size[0] = this._nbColumn;
+    }
+
     item.width = this.widgetsSize[0] * item.size[0] + ( item.size[0] - 1 ) * this.margin;
     item.height = this.widgetsSize[1] * item.size[1] + ( item.size[1] - 1 ) * this.margin;
 
