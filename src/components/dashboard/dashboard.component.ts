@@ -258,17 +258,18 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
 
     const item = items[index].instance;
 
-    if(item.size[0] > this._nbColumn) {
-      item.size[0] = this._nbColumn;
+    let itemWidth = item.size[0]
+    if (itemWidth > this._nbColumn) {
+      itemWidth = this._nbColumn;
     }
 
-    item.width = this.widgetsSize[0] * item.size[0] + ( item.size[0] - 1 ) * this.margin;
+    item.width = this.widgetsSize[0] * itemWidth + ( itemWidth - 1 ) * this.margin;
     item.height = this.widgetsSize[1] * item.size[1] + ( item.size[1] - 1 ) * this.margin;
 
-    let haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
+    let haveEnoughSpace = column + itemWidth - 1 <= this._nbColumn;
     while (lines[column] > 0 || !haveEnoughSpace) {
       column++;
-      haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
+      haveEnoughSpace = column + itemWidth - 1 <= this._nbColumn;
 
       if (column >= this._nbColumn) {
         column = 0;
@@ -276,11 +277,11 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
           lines[i]--;
         }
         row++;
-        haveEnoughSpace = column + item.size[0] - 1 <= this._nbColumn;
+        haveEnoughSpace = column + itemWidth - 1 <= this._nbColumn;
       }
 
       if (!haveEnoughSpace) continue;
-      for (let i = 1; i < item.size[0]; i++) {
+      for (let i = 1; i < itemWidth; i++) {
         haveEnoughSpace = lines[column + i] <= 0;
         if (!haveEnoughSpace) break;
       }
@@ -290,7 +291,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     const top = row * this.widgetsSize[1] + row * this.margin + this.margin / 2;
 
     lines[column] = item.size[1];
-    for (let i = 1; i < item.size[0]; i++) {
+    for (let i = 1; i < itemWidth; i++) {
       lines[column + i] = item.size[1];
     }
 
