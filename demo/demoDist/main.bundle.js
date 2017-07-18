@@ -75,6 +75,9 @@ var DashboardComponent = (function () {
         };
         this._calculPositions();
     };
+    DashboardComponent.prototype.refreshWidgets = function () {
+        this._calculPositions();
+    };
     DashboardComponent.prototype.enableDrag = function () {
         this.dragEnable = true;
         this._renderer.removeClass(this._ngEl.nativeElement, 'disabled');
@@ -84,10 +87,12 @@ var DashboardComponent = (function () {
         this._renderer.addClass(this._ngEl.nativeElement, 'disabled');
     };
     DashboardComponent.prototype.addItem = function (ngItem) {
+        var _this = this;
         var factory = this._componentFactoryResolver.resolveComponentFactory(ngItem);
         var ref = this._viewCntRef.createComponent(factory);
         var newItem = ref.instance;
         newItem.setEventListener(this._onMouseDown.bind(this));
+        newItem.onSizeChanged.subscribe(function () { return _this._calculPositions(); });
         this._elements.push(ref);
         this._calculPositions();
         return newItem;
@@ -682,7 +687,7 @@ module.exports = module.exports.toString();
 /***/ 294:
 /***/ (function(module, exports) {
 
-module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onOrderChange)=\"logOrder($event)\" (onDragStart)=\"log($event, 'ondragstart')\"\n           (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\"\n           [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <!--widget [size]=\"[1, 1]\" widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small2\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <!--widget [size]=\"[1, 1]\" widgetId=\"small3\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n\n  <widget [size]=\"[2, 3]\" widgetId=\"big2\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 3]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small4\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small5\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget-->\n\n  <widget [size]=\"[2, 1]\" widgetId=\"large\">\n    <div widgetHandle class=\"head handle\">Large widget [2, 1] handle only on text</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div widgetHandle class=\"head handle\">Tall widget [1, 2] handle only on text</div>\n  </widget>\n  <widget widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\" class=\"handle\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n</dashboard>\n"
+module.exports = "<h1>\n  {{title}}\n</h1>\n<button (click)=\"addWidget()\">Add widget</button>\n<br><br>\n<dashboard (onOrderChange)=\"logOrder($event)\" (onDragStart)=\"log($event, 'ondragstart')\"\n           (onDragEnd)=\"log($event, 'ondragend')\"\n           (onDrag)=\"log($event, 'ondragmove')\" class=\"dashboard\" [widgetsSize]=\"widgetsSize\"\n           [margin]=\"dashboardMargin\">\n\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <!--widget [size]=\"[1, 1]\" widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small2\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <!--widget [size]=\"[1, 1]\" widgetId=\"small3\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n\n  <widget [size]=\"[2, 3]\" widgetId=\"big2\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 3]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small4\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[1, 1]\" widgetId=\"small5\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget-->\n\n  <widget [size]=\"[2, 3]\" widgetId=\"large\">\n    <div widgetHandle class=\"head handle\">Large widget [2, 1] handle only on text</div>\n  </widget>\n  <widget [size]=\"[1, 2]\" widgetId=\"tall\">\n    <div widgetHandle class=\"head handle\">Tall widget [1, 2] handle only on text</div>\n  </widget>\n  <widget widgetId=\"small\" class=\"handle\">\n    <div class=\"head\">Small widget [1, 1]</div>\n  </widget>\n  <widget [size]=\"[2, 2]\" widgetId=\"big\" class=\"handle\">\n    <div class=\"head\">Big widget [2, 2]</div>\n  </widget>\n  <widget *ngFor=\"let item of [1, 2, 3, 4, 5, 6]; let i = index;\" [widgetId]=\"i\" class=\"handle\">\n    <div class=\"head\">Widget {{i}} [1, 1]</div>\n    <div class=\"close\" (click)=\"close($event, i)\">X</div>\n  </widget>\n\n</dashboard>\n"
 
 /***/ }),
 
@@ -751,9 +756,14 @@ var WidgetComponent = (function () {
         this._ngEl = _ngEl;
         this._renderer = _renderer;
         this.size = [1, 1];
+        this.onSizeChanged = new core_1.EventEmitter();
     }
     WidgetComponent.prototype.ngOnInit = function () {
         this._renderer.addClass(this._ngEl.nativeElement, 'widget');
+    };
+    WidgetComponent.prototype.setSize = function (size) {
+        this.size = size;
+        this.onSizeChanged.emit(this.size);
     };
     Object.defineProperty(WidgetComponent.prototype, "element", {
         get: function () {
@@ -836,6 +846,7 @@ WidgetComponent.ctorParameters = function () { return [
 WidgetComponent.propDecorators = {
     'size': [{ type: core_1.Input },],
     'widgetId': [{ type: core_1.Input },],
+    'onSizeChanged': [{ type: core_1.Output },],
     '_handle': [{ type: core_1.ContentChild, args: [widget_handle_directive_1.WidgetHandleDirective,] },],
 };
 exports.WidgetComponent = WidgetComponent;
@@ -928,12 +939,12 @@ var AppComponent = (function () {
     AppComponent.prototype._onResize = function (event) {
         if (window.innerWidth < 750) {
             this.dashboardMargin = 10;
-            this.widgetsSize = [this.dashboard.width / 2 - this.dashboardMargin, 150];
+            this.widgetsSize = [this.dashboard.width / 2 - this.dashboardMargin, this.widgetsSize[1]];
         }
         else {
             this.dashboardMargin = 20;
             var nbColumn = Math.floor(this.dashboard.width / (300 + this.dashboardMargin));
-            this.widgetsSize = [this.dashboard.width / nbColumn - this.dashboardMargin, 150];
+            this.widgetsSize = [this.dashboard.width / nbColumn - this.dashboardMargin, this.widgetsSize[1]];
         }
     };
     AppComponent.prototype.log = function (widget, type) {
