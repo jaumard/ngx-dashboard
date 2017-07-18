@@ -19,6 +19,8 @@ export declare class WidgetComponent {
 
   addClass(myClass: string): void;
 
+  setSize(size: number[]): void;
+
   removeClass(myClass: string): void;
 
 }

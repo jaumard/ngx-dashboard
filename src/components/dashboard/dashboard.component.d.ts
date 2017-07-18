@@ -1,5 +1,5 @@
 import {WidgetComponent} from "../widget/widget.component";
-import {EventEmitter, QueryList, ViewContainerRef, SimpleChanges, Type} from "@angular/core";
+import {EventEmitter, QueryList, SimpleChanges, Type, ViewContainerRef} from "@angular/core";
 export declare class DashboardComponent {
   onDragStart: EventEmitter<WidgetComponent>;
   onDrag: EventEmitter<WidgetComponent>;
@@ -26,6 +26,8 @@ export declare class DashboardComponent {
   enableDrag(): void;
 
   disableDrag(): void;
+
+  refreshWidgets(): void;
 
   getWidgetById(widgetId: string): WidgetComponent;
 

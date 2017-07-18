@@ -138,6 +138,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     this._calculPositions();
   }
 
+  public refreshWidgets(): void {
+    this._calculPositions();
+  }
+
   public enableDrag(): void {
     this.dragEnable = true;
     this._renderer.removeClass(this._ngEl.nativeElement, 'disabled');
@@ -153,6 +157,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
     const ref = this._viewCntRef.createComponent(factory);
     const newItem: T = ref.instance;
     newItem.setEventListener(this._onMouseDown.bind(this));
+    newItem.onSizeChanged.subscribe(() => this._calculPositions());
     this._elements.push(ref);
     this._calculPositions();
     return newItem;

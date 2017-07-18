@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ElementRef, ContentChild, Renderer2} from "@angular/core";
+import {Component, ContentChild, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2} from "@angular/core";
 import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
 
 @Component({
@@ -8,6 +8,7 @@ import {WidgetHandleDirective} from "../../directives/widget-handle.directive";
 export class WidgetComponent implements OnInit {
   @Input() public size: number[] = [1, 1];
   @Input() public widgetId: string;
+  @Output() onSizeChanged: EventEmitter<number[]> = new EventEmitter<number[]>();
   @ContentChild(WidgetHandleDirective) protected _handle: WidgetHandleDirective;
 
   constructor(protected _ngEl: ElementRef,
@@ -16,6 +17,11 @@ export class WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this._renderer.addClass(this._ngEl.nativeElement, 'widget');
+  }
+
+  setSize(size: number[]): void {
+    this.size = size;
+    this.onSizeChanged.emit(this.size);
   }
 
   public get element(): any {

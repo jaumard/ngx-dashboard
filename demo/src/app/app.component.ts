@@ -1,5 +1,5 @@
-import {Component, ViewChild, OnInit} from "@angular/core";
-import {WidgetComponent, DashboardComponent} from "../dist";
+import {Component, OnInit, ViewChild} from "@angular/core";
+import {DashboardComponent, WidgetComponent} from "../dist";
 import {MyWidgetComponent} from "./my-widget/my-widget.component";
 
 @Component({
@@ -27,12 +27,12 @@ export class AppComponent implements OnInit {
   private _onResize(event: any) {
     if (window.innerWidth < 750) {
       this.dashboardMargin = 10;
-      this.widgetsSize = [this.dashboard.width / 2 - this.dashboardMargin, 150];
+      this.widgetsSize = [this.dashboard.width / 2 - this.dashboardMargin, this.widgetsSize[1]];
     }
     else {
       this.dashboardMargin = 20;
       const nbColumn = Math.floor(this.dashboard.width / (300 + this.dashboardMargin));
-      this.widgetsSize = [this.dashboard.width / nbColumn - this.dashboardMargin, 150];
+      this.widgetsSize = [this.dashboard.width / nbColumn - this.dashboardMargin, this.widgetsSize[1]];
     }
   }
 
