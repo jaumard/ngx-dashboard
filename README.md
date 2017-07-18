@@ -107,11 +107,6 @@ npm start
 ## License
 [MIT](https://github.com/jaumard/trailpack-passport/blob/master/LICENSE)
 
-## Support on Beerpay
-Hey dude! Help me out for a couple of :beers:!
-
-[![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/badge.svg?style=beer-square)](https://beerpay.io/jaumard/ngx-dashboard)  [![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/make-wish.svg?style=flat-square)](https://beerpay.io/jaumard/ngx-dashboard?focus=wish)
-
 [npm-image]: https://img.shields.io/npm/v/ngx-dashboard.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/ngx-dashboard
 [npm-download]: https://img.shields.io/npm/dt/ngx-dashboard.svg
