@@ -93,10 +93,14 @@ To do this, you can use the `widgetHandle` directive to select witch handle you 
 To run the demo locally, you need to do: 
 
 ```
-npm run ngm
-cd demo/src
-ln -s ../../src/dist .
-cd ../
+cd ngx-dashboard
+npm i 
+npm run build
+cd demo 
+npm i
+cd src
+ln -s ../../src/dist/ .
+cd ..
 npm start
 ```
 
