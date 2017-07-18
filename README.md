@@ -93,20 +93,19 @@ To do this, you can use the `widgetHandle` directive to select witch handle you 
 To run the demo locally, you need to do: 
 
 ```
-npm run ngm
-cd demo/src
-ln -s ../../src/dist .
-cd ../
+cd ngx-dashboard
+npm i 
+npm run build
+cd demo 
+npm i
+cd src
+ln -s ../../src/dist/ .
+cd ..
 npm start
 ```
 
 ## License
 [MIT](https://github.com/jaumard/trailpack-passport/blob/master/LICENSE)
-
-## Support on Beerpay
-Hey dude! Help me out for a couple of :beers:!
-
-[![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/badge.svg?style=beer-square)](https://beerpay.io/jaumard/ngx-dashboard)  [![Beerpay](https://beerpay.io/jaumard/ngx-dashboard/make-wish.svg?style=flat-square)](https://beerpay.io/jaumard/ngx-dashboard?focus=wish)
 
 [npm-image]: https://img.shields.io/npm/v/ngx-dashboard.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/ngx-dashboard
