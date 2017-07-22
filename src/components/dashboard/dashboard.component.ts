@@ -16,6 +16,7 @@ import {
   ViewChild,
   ViewContainerRef
 } from "@angular/core";
+import {DragEvent} from "./drag-event-type";
 import {WidgetComponent} from "../widget/widget.component";
 
 @Component({
@@ -64,9 +65,9 @@ import {WidgetComponent} from "../widget/widget.component";
 })
 export class DashboardComponent implements AfterViewInit, OnChanges {
   //  Event Emitters
-  @Output() public onDragStart: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
-  @Output() public onDrag: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
-  @Output() public onDragEnd: EventEmitter<WidgetComponent> = new EventEmitter<WidgetComponent>();
+  @Output() public onDragStart: EventEmitter<DragEvent> = new EventEmitter<DragEvent>();
+  @Output() public onDrag: EventEmitter<DragEvent> = new EventEmitter<DragEvent>();
+  @Output() public onDragEnd: EventEmitter<DragEvent> = new EventEmitter<DragEvent>();
   @Output() public onOrderChange: EventEmitter<Array<string>> = new EventEmitter<Array<string>>();
 
   @Input() margin: number = 10;
@@ -317,7 +318,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   private _onMouseDown(e: any, widget: WidgetComponent): boolean {
     this._isDragging = this.dragEnable && e.target === widget.handle;
     if (this._isDragging) {
-      this.onDragStart.emit(widget);
+      this.onDragStart.emit({
+        widget,
+        event: e
+      });
       widget.addClass('active');
       this._currentElement = widget;
       this._offset = this._getOffsetFromTarget(e);
@@ -356,7 +360,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       } else {
         this._isScrolling = false;
       }
-      this.onDrag.emit(this._currentElement);
+      this.onDrag.emit({
+        widget: this._currentElement,
+        event: e
+      });
       const pos = this._getMousePosition(e);
 
       let left = pos.left - this._offset.left;
@@ -404,7 +411,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       let top;
       left = this._currentMouseEvent.clientX - refPos.left;
       top = this._currentMouseEvent.clientY - refPos.top;
-      this.onDrag.emit(this._currentElement);
+      this.onDrag.emit({widget: this._currentElement, event: e});
       left = left - this._offset.left;
       let top_1 = top - this._offset.top + this._scrollChange;
       if (Math.abs(top - this._previousPosition.top) > this.THRESHOLD
@@ -425,7 +432,10 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
       this._isDragging = false;
       this._isScrolling = false;
       if (this._currentElement) {
-        this.onDragEnd.emit(this._currentElement);
+        this.onDragEnd.emit({
+          widget: this._currentElement,
+          event: e
+        });
         this._currentElement.removeClass('active');
         this._currentElement.addClass('animate');
       }
