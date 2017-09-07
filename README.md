@@ -99,7 +99,7 @@ npm run build
 cd demo 
 npm i
 cd src
-ln -s ../../src/dist/ . //for linux and Mac, for Windows use mklink /D dist ....\src 
+ln -s ../../src/dist/ . //for linux and Mac, for Windows use mklink /D dist ..\..\src 
 cd ..
 npm start
 ```
