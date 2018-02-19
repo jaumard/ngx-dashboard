@@ -21,14 +21,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this._onResize(null)
   }
 
   /**
    * On Windows based machines this ensures that the resize is valid after the dom content has been loaded.
    */
   ngAfterViewInit(): void {
-    this._onResize(null);
+    setTimeout(() => {
+      this._onResize(null);
+    })
   }
 
   private _onResize(event: any) {
