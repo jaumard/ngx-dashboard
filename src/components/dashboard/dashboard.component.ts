@@ -118,6 +118,7 @@ export class DashboardComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit(): void {
     this._items.forEach(item => {
       item.setEventListener(this._onMouseDown.bind(this));
+      item.onSizeChanged.subscribe(() => this._calculPositions());
       //this is an ugly ugly ugly hack :( but needed in order to make static and dynamic widget works together
       //FIXME find a way to retrieve a ComponentRef from static widgets instead of this fake one
       this._elements.push({

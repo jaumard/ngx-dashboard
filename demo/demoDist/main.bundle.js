@@ -55,6 +55,7 @@ var DashboardComponent = (function () {
         var _this = this;
         this._items.forEach(function (item) {
             item.setEventListener(_this._onMouseDown.bind(_this));
+            item.onSizeChanged.subscribe(function () { return _this._calculPositions(); });
             //this is an ugly ugly ugly hack :( but needed in order to make static and dynamic widget works together
             //FIXME find a way to retrieve a ComponentRef from static widgets instead of this fake one
             _this._elements.push({
