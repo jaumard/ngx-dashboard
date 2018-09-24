@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
+import {Component, OnInit, ViewChild, AfterViewInit} from "@angular/core";
 import {DashboardComponent, WidgetComponent} from "../dist";
 import {MyWidgetComponent} from "./my-widget/my-widget.component";
 
@@ -10,7 +10,7 @@ import {MyWidgetComponent} from "./my-widget/my-widget.component";
     '(window:resize)': '_onResize($event)',
   }
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'app works!';
   @ViewChild(DashboardComponent) dashboard: DashboardComponent;
   widgetsSize: number[] = [300, 150];
@@ -21,7 +21,15 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._onResize(null)
+  }
+
+  /**
+   * On Windows based machines this ensures that the resize is valid after the dom content has been loaded.
+   */
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this._onResize(null);
+    })
   }
 
   private _onResize(event: any) {
